@@ -1,0 +1,4 @@
+configfile
+server_ip%192.168.1.102
+app_token%testtoken
+user_name%wjakew
