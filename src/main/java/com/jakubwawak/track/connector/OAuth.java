@@ -13,6 +13,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.Date;
 
 /**
  * Object for creating and adding 
@@ -33,13 +34,18 @@ public class OAuth {
      * file extension:
      * .track
      */
-    String server_ip,app_token,user_name;
+    public String server_ip,app_token,user_name;
+    public Date apr_login_time;
+    //user data
+    public int user_id;
+    public String session_token;
+    public String user_login;
     
     /**
      * Constructor
      */
     public OAuth(){
-        file_src = "config.track";
+        file_src = "config.trak";
         raw_data = new ArrayList<String>();
         
         File file = new File(file_src);
@@ -96,13 +102,13 @@ public class OAuth {
     public void compose_configuration(){
         raw_data.forEach(line -> {
             if ( line.contains("server_ip%")){
-                this.server_ip = line.split("%")[1].substring(0,line.split("%")[1].length()-1);
+                this.server_ip = line.split("%")[1];
             }
             else if( line.contains("app_token%")){
-                this.app_token = line.split("%")[1].substring(0,line.split("%")[1].length()-1);
+                this.app_token = line.split("%")[1];
             }
             else if( line.contains("user_name%")){
-                this.user_name = line.split("%")[1].substring(0,line.split("%")[1].length()-1);
+                this.user_name = line.split("%")[1];
             }
         });
     }
@@ -145,5 +151,16 @@ public class OAuth {
         }catch(IOException e){
             return -1;
         }
+    }
+    
+    /**
+     * Function for showing configuration data
+     */
+    public void show_configuration(){
+        System.out.println("Configuartion:");
+        System.out.print("server_ip%"+this.server_ip+"\n");
+        System.out.print("app_token%"+this.app_token+"\n");
+        System.out.print("user_name%"+this.user_name+"\n");
+        System.out.print("end.\n");
     }
 }

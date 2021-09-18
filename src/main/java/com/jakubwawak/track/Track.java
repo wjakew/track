@@ -5,8 +5,15 @@ all rights reseved
  */
 package com.jakubwawak.track;
 
+import com.google.gson.JsonElement;
+import com.jakubwawak.track.connector.Connector;
 import com.jakubwawak.track.connector.OAuth;
+import com.mashape.unirest.http.exceptions.UnirestException;
 import java.io.IOException;
+import maintenence.Parser;
+import maintenence.TrackLogger;
+import user_interface.login_window;
+import user_interface.message_window;
 
 /**
  *Main class of the program
@@ -15,45 +22,92 @@ import java.io.IOException;
 public class Track {
     
     final static String version = "1.0.0";
-    final static String build = "TRA100921REV1CK";
+    final static String build = "TRA170921REV1CK";
     
     static OAuth oauth;
-    
+    static TrackLogger logger;
+    static Connector connector;
     /**
      * Main function of the program
      * @param args 
      */
-    public static void main(String args[]) throws IOException{
-        show_header();
-        System.out.println("Loading configuration...");
-        oauth = new OAuth();
-        
-        oauth.load();
-        oauth.compose_configuration();
-        
-        // file exist, no error
-        if ( oauth.exists && !oauth.error){
-            System.out.println("Configuration found");
-            System.out.println("Running the program");
-            // program is running
-        }
-        // file not exists
-        else if ( !oauth.exists ){
-            System.out.println("Configuration not found");
-            int ret = oauth.user_load();
-            if ( ret == 1){
-                if (oauth.save_to_file() == 1){
-                    System.out.println("Configuration saved");
-                    // program is running
-                }
-                else
-                    System.out.println("Failed to save configuration");
-                    System.exit(0);
+    public static void main(String args[]) throws IOException, UnirestException{
+        try{
+            show_header();
+            System.out.println("Loading configuration...");
+            oauth = new OAuth();
+            logger = new TrackLogger();
+            oauth.load();
+            oauth.compose_configuration();
+            connector = null;
+
+            // file exist, no error
+            if ( oauth.exists && !oauth.error){
+                logger.log("Configuration file found", 0);
+                System.out.println("Configuration found");
+                System.out.println("Running the program");
+                logger.log("Configuration loaded",0);
+                // program is running
+                run();
             }
+            // file not exists
+            else if ( !oauth.exists ){
+                System.out.println("Configuration not found");
+                logger.log("Failed to found configuration!",1);
+                int ret = oauth.user_load();
+                if ( ret == 1){
+                    if (oauth.save_to_file() == 1){
+                        logger.log("New configuration file saved",0);
+                        System.out.println("Configuration saved");
+                        // program is running
+                        run();
+                    }
+                    else
+                        System.out.println("Failed to save configuration");
+                        logger.log("Failed to save configuration to file",1);
+                        System.exit(0);
+                }
+            }
+            // error while reading file
+            else if ( oauth.error ){
+                System.out.println("Configuration file error");
+                logger.log("Failed to load/read configuration file",1);
+            }
+        }catch(Exception e){
+            new message_window("Fatal error\n"+e.toString()+"\n"+e.getMessage(),"FATAL ERROR");
         }
-        // error while reading file
-        else if ( oauth.error ){
-            System.out.println("Configuration file error");
+        
+    }
+    
+    /**
+     * Main loop of the program
+     */
+    public static void run() throws UnirestException{
+        logger.log("Connector initialization", 0);
+        connector = new Connector(oauth,logger);
+        logger.log("Connector initialized",0);
+        JsonElement el = connector.health();
+        if ( el == null){
+            // connection cannot be established
+            new message_window("Failed to connect to the server","ERROR");
+            logger.log("Failed to connect to the server",1);
+        }
+        else{
+            Parser parser = new Parser(el);        
+            if ( connector.health ){
+                connector.version = version;
+                connector.bulid = build;
+                logger.log("Server health checked. Seems fine",0);
+                System.out.println("Connected to: "+oauth.server_ip);
+                System.out.println("API "+parser.get_string("version")+ " "+parser.get_string("build_number"));
+                logger.log("Connected to: "+oauth.server_ip+
+                        " ("+parser.get_string("version")+"/"+parser.get_string("build_number")+")",0);
+                new login_window(null,true,connector,0);
+            }
+            else{
+                logger.log("Server health failed to check. Server seems not to respond",0);
+                new message_window("Health of the server failed to check","ERROR");
+            }
         }
     }
     
