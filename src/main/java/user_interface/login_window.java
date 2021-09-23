@@ -8,8 +8,7 @@ package user_interface;
 import com.google.gson.JsonElement;
 import com.jakubwawak.track.connector.Connector;
 import com.mashape.unirest.http.exceptions.UnirestException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.awt.event.KeyEvent;
 import maintenence.Parser;
 
 /**
@@ -58,6 +57,8 @@ public class login_window extends javax.swing.JDialog {
         label_version = new javax.swing.JLabel();
         label_buildnumber = new javax.swing.JLabel();
         field_password = new javax.swing.JPasswordField();
+        button_register = new javax.swing.JButton();
+        button_reset = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Track Client");
@@ -81,6 +82,26 @@ public class login_window extends javax.swing.JDialog {
 
         label_buildnumber.setText("build number");
 
+        field_password.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                field_passwordKeyPressed(evt);
+            }
+        });
+
+        button_register.setText("Register");
+        button_register.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                button_registerActionPerformed(evt);
+            }
+        });
+
+        button_reset.setText("Reset password");
+        button_reset.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                button_resetActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -89,6 +110,10 @@ public class login_window extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(button_login, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(label_version)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(label_buildnumber))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jLabel2)
@@ -99,9 +124,9 @@ public class login_window extends javax.swing.JDialog {
                             .addComponent(field_password, javax.swing.GroupLayout.DEFAULT_SIZE, 246, Short.MAX_VALUE))
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(label_version)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(label_buildnumber)))
+                        .addComponent(button_reset, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(button_register, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -119,9 +144,13 @@ public class login_window extends javax.swing.JDialog {
                 .addComponent(button_login)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(button_register)
+                    .addComponent(button_reset))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(label_version)
                     .addComponent(label_buildnumber))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         pack();
@@ -163,9 +192,57 @@ public class login_window extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_button_loginActionPerformed
 
+    private void button_registerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_registerActionPerformed
+        new register_window(this,true,connector);
+    }//GEN-LAST:event_button_registerActionPerformed
+
+    private void field_passwordKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_field_passwordKeyPressed
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER){
+            if ( validate_fields() ){
+                try {
+                    JsonElement response = connector.user_login(field_login.getText(),field_password.getText());
+                    if (response != null){
+                        Parser parser = new Parser(response);
+                        if(parser.get_int("user_id") == -6){
+                            new message_window(this,true,"App token not found.","APPTOKEN_ERROR");
+                        }
+                        else if (parser.get_int("user_id") == -5){
+                            new message_window(this,true,"Wrong password or login. Authorization failed.","AUTH_ERROR");
+                        }
+                        else if (parser.get_int("user_id") == -1){
+                            new message_window(this,true,"No user with that login or password found","NOUSER_ERROR");
+                        }
+                        else{
+                            new message_window(this,true,"Welcome back "+parser.get_string("user_name")+"!","welcome!");
+                            //login successfull
+                            if (mode == 0)
+                                new main_window(connector);
+                            dispose();
+                        }
+                    }
+                    else{
+
+                    }
+                } catch (UnirestException ex) {
+                    new message_window(this,true,"ERROR\n"+ex.toString(),"ERROR");
+                }
+
+            }
+            else{
+                new message_window(this,true,"Wrong login or password","ERROR");
+            }
+        }
+    }//GEN-LAST:event_field_passwordKeyPressed
+
+    private void button_resetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_resetActionPerformed
+        new resetpassword_window(this,true,connector);
+    }//GEN-LAST:event_button_resetActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton button_login;
+    private javax.swing.JButton button_register;
+    private javax.swing.JButton button_reset;
     private javax.swing.JTextField field_login;
     private javax.swing.JPasswordField field_password;
     private javax.swing.JLabel jLabel1;

@@ -119,4 +119,51 @@ public class Connector {
         }
     }
     
+    /**
+     * Function for registrating user
+     * @param user_name
+     * @param user_surname
+     * @param user_email
+     * @return JsonElement
+     */
+    public JsonElement user_register(String user_name,String user_surname,String user_email) throws UnirestException{
+        try{
+            logger.log("Trying to register  new user ("+user_name+" "+user_surname+")",0);
+            HttpResponse <JsonNode> response = response_creator("/register/"+oauth.app_token+"/"+user_name+"/"+user_surname+"/"+user_email);
+            
+            if ( response != null ){
+                return parse_response(response);
+            }
+            else{
+                return null;
+            }
+        }catch(UnirestException e){
+            logger.log("Failed to register new user ("+e.toString()+")",1);
+            return null;
+        }
+    }
+    
+    /**
+     * 
+     * @param email_address
+     * @return 
+     */
+    public JsonElement user_resetpassword(String email_address) throws UnirestException{
+        try{
+            logger.log("Trying to reset password for user with email "+email_address,0);
+            HttpResponse<JsonNode> response = response_creator("/password-reset/"+oauth.app_token+"/"+email_address);
+            
+            if ( response != null){
+                return parse_response(response);
+            }
+            else{
+                return null;
+            }
+        }catch(UnirestException e){
+            logger.log("Failed to reset password ("+e.toString()+")", 1);
+            return null;
+        }
+        
+    }
+    
 }

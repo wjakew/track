@@ -22,7 +22,7 @@ import user_interface.message_window;
 public class Track {
     
     final static String version = "1.0.0";
-    final static String build = "TRA170921REV1CK";
+    final static String build = "TRA210921REV1CK";
     
     static OAuth oauth;
     static TrackLogger logger;
@@ -74,7 +74,7 @@ public class Track {
                 logger.log("Failed to load/read configuration file",1);
             }
         }catch(Exception e){
-            new message_window("Fatal error\n"+e.toString()+"\n"+e.getMessage(),"FATAL ERROR");
+            new message_window("Choosen server is not answering right now...\n\n"+e.getMessage(),"FATAL ERROR");
         }
         
     }
