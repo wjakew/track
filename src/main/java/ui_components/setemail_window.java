@@ -3,39 +3,29 @@ Jakub Wawak
 kubawawak@gmail.com
 all rights reseved
  */
-package user_interface;
+package ui_components;
 
-import com.google.gson.JsonElement;
 import com.jakubwawak.track.connector.Connector;
 import com.mashape.unirest.http.exceptions.UnirestException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import maintenence.Parser;
+import user_interface.message_window;
 
 /**
- *Window for reseting password
+ *Function for setting email
  * @author kubaw
  */
-public class resetpassword_window extends javax.swing.JDialog {
+public class setemail_window extends javax.swing.JDialog {
 
     /**
-     * Creates new form resetpassword_window
+     * Creates new form setemail_window
      */
     Connector connector;
-    public resetpassword_window(javax.swing.JDialog parent, boolean modal,Connector connector) {
+    public setemail_window(java.awt.Frame parent, boolean modal,Connector connector) {
         super(parent, modal);
         this.connector = connector;
         initComponents();
         this.setLocationRelativeTo(null);
         setVisible(true);
-    }
-    
-    /**
-     * Function for field validation
-     * @return boolean
-     */
-    boolean validate_fields(){
-        return field_email.getText().contains("@");
     }
 
     /**
@@ -48,18 +38,18 @@ public class resetpassword_window extends javax.swing.JDialog {
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
-        field_email = new javax.swing.JTextField();
-        button_reset = new javax.swing.JButton();
+        field_mail = new javax.swing.JTextField();
+        button_set = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Password reset");
+        setTitle("Set mail");
 
-        jLabel1.setText("Email address:");
+        jLabel1.setText("Set mail:");
 
-        button_reset.setText("Reset password");
-        button_reset.addActionListener(new java.awt.event.ActionListener() {
+        button_set.setText("Set mail");
+        button_set.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                button_resetActionPerformed(evt);
+                button_setActionPerformed(evt);
             }
         });
 
@@ -70,56 +60,50 @@ public class resetpassword_window extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(button_reset, javax.swing.GroupLayout.DEFAULT_SIZE, 392, Short.MAX_VALUE)
+                    .addComponent(button_set, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(field_email)))
+                        .addComponent(field_mail, javax.swing.GroupLayout.DEFAULT_SIZE, 273, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(36, 36, 36)
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(field_email, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(field_mail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(button_reset)
+                .addComponent(button_set)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void button_resetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_resetActionPerformed
-        if ( validate_fields() ){
+    private void button_setActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_setActionPerformed
+        if ( !field_mail.getText().isEmpty() ){
             try {
-                JsonElement response = connector.user_resetpassword(field_email.getText());
-                Parser parser = new Parser(response);
-                if ( parser.get_int("user_id") == -7 ){
-                    new message_window(this,true,"No account connected with this email address","");
-                }
-                else if ( parser.get_int("user_id") == -5){
-                    new message_window(this,true,"Internall error","");
+                Parser parser = new Parser(connector.set_mail(field_mail.getText(), this));
+                if ( parser.get_int("flag") == 1 ){
+                    new message_window(this,true,"Mail updated","");
+                    dispose();
                 }
                 else{
-                    new message_window(this,true,"Password reset sent to "+field_email.getText(),"");
+                    new message_window(this,true,"Failed to update mail","");
                 }
             } catch (UnirestException ex) {
-                new message_window(this,true,"Error \n"+ex.toString(),"");
+                new message_window(this,true,"Error\n"+ex.toString(),"ERROR");
             }
             
         }
-        else{
-            new message_window(this,true,"Email address is wrong","");
-        }
-    }//GEN-LAST:event_button_resetActionPerformed
+    }//GEN-LAST:event_button_setActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton button_reset;
-    private javax.swing.JTextField field_email;
+    private javax.swing.JButton button_set;
+    private javax.swing.JTextField field_mail;
     private javax.swing.JLabel jLabel1;
     // End of variables declaration//GEN-END:variables
 }

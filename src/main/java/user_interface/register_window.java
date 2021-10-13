@@ -8,6 +8,8 @@ package user_interface;
 import com.google.gson.JsonElement;
 import com.jakubwawak.track.connector.Connector;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import maintenence.Parser;
@@ -143,9 +145,14 @@ public class register_window extends javax.swing.JDialog {
                 JsonElement response = connector.user_register(field_name.getText(), field_surname.getText(), field_email.getText());
                 if ( response != null ){
                     Parser parser = new Parser(response);
-                    if ( !parser.get_string("user_password").equals("") ){
-                        new message_window(this,true,"User registered!","");
-                        dispose();
+                    if (parser.get_int("user_id") != -7){
+                        if ( !parser.get_string("user_password").equals("") ){
+                            new message_window(this,true,"User registered!","");
+                            dispose();
+                        }
+                    }
+                    else{
+                        new message_window(this,true,"Email is already registered in system","");
                     }
                 }
                 else{

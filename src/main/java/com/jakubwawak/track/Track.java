@@ -12,6 +12,7 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import java.io.IOException;
 import maintenence.Parser;
 import maintenence.TrackLogger;
+import ui_components.configurationload_window;
 import user_interface.login_window;
 import user_interface.message_window;
 
@@ -22,7 +23,7 @@ import user_interface.message_window;
 public class Track {
     
     final static String version = "1.0.0";
-    final static String build = "TRA210921REV1CK";
+    final static String build = "TRA101021REV1CK";
     
     static OAuth oauth;
     static TrackLogger logger;
@@ -52,21 +53,7 @@ public class Track {
             }
             // file not exists
             else if ( !oauth.exists ){
-                System.out.println("Configuration not found");
-                logger.log("Failed to found configuration!",1);
-                int ret = oauth.user_load();
-                if ( ret == 1){
-                    if (oauth.save_to_file() == 1){
-                        logger.log("New configuration file saved",0);
-                        System.out.println("Configuration saved");
-                        // program is running
-                        run();
-                    }
-                    else
-                        System.out.println("Failed to save configuration");
-                        logger.log("Failed to save configuration to file",1);
-                        System.exit(0);
-                }
+                new configurationload_window(null,true,connector,oauth,logger,version,build);
             }
             // error while reading file
             else if ( oauth.error ){
@@ -102,7 +89,7 @@ public class Track {
                 System.out.println("API "+parser.get_string("version")+ " "+parser.get_string("build_number"));
                 logger.log("Connected to: "+oauth.server_ip+
                         " ("+parser.get_string("version")+"/"+parser.get_string("build_number")+")",0);
-                new login_window(null,true,connector,0);
+                new login_window(connector,0);
             }
             else{
                 logger.log("Server health failed to check. Server seems not to respond",0);

@@ -1,4 +1,4 @@
-configfile
-server_ip%localhost
+confgfile
+server_ip%192.168.1.101
 app_token%testtoken
-user_name%admin
+user_name%null

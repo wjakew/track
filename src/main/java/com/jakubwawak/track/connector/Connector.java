@@ -13,9 +13,15 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Date;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
 import maintenence.Parser;
+import maintenence.Password_Validator;
 import maintenence.TrackLogger;
+import user_interface.login_window;
+import user_interface.message_window;
 
 /**
  *Object for maintaining connection to server
@@ -27,7 +33,7 @@ public class Connector {
     TrackLogger logger;
     public boolean health;
     public Date ldt;
-    
+    public boolean error;
     public String version,bulid;
     /**
      * Constructor
@@ -37,10 +43,88 @@ public class Connector {
         this.oauth = oauth;
         this.logger = logger;
         ldt = new Date();
+        error = false;
     }
     
+    /**
+     * Function for resetting 
+     * @param url
+     * @return String
+     */
     public String url_builder(String url){
         return "http://"+oauth.server_ip+":8080"+url;
+    }
+    
+    /**
+     * Function for preparing raw JSON
+     * @param url
+     * @return JsonElement
+     * @throws UnirestException 
+     */
+    public JsonElement commit(String url,JFrame object) throws UnirestException{
+        HttpResponse<JsonNode> response = response_creator(url);
+        System.out.println("Trying to commit url:"+url);
+        Parser parser = new Parser(parse_response(response));
+        try{
+            if ( parser == null ){
+                new message_window(object,true,"Connection error...","");
+                System.exit(0);
+            }
+            if ( parser.get_int("flag") < 0){
+                switch(parser.get_int("flag")){
+                    case -11:
+                        new message_window(object,true,"Provided app token is wrong","APPTOKEN-ERROR");
+                        break;
+                    case -99:
+                        new message_window(object,true,"Your login session has expired","SESSION-EXPIRED");
+                        break;
+                    case -88:
+                        new message_window(object,true,"Database error when checking session token","");
+                        break;
+                }
+                new login_window(object,true,this,1);
+            }
+        }catch(Exception e){
+            System.out.println("CONNECTOR ERROR: "+e.toString());
+        }
+        return parse_response(response);
+    }
+    
+    /**
+     * Function for preparing raw JSON
+     * @param url
+     * @return JsonElement
+     * @throws UnirestException 
+     */
+    public JsonElement commit(String url,JDialog object) throws UnirestException{
+        HttpResponse<JsonNode> response = response_creator(url);
+        System.out.println("Trying to commit url:"+url);
+        Parser parser = new Parser(parse_response(response));
+        try{
+            if ( parser == null ){
+                new message_window(object,true,"Connection error...","");
+                System.exit(0);
+            }
+            
+            if ( parser.get_int("flag") < 0){
+                switch(parser.get_int("flag")){
+                    case -11:
+                        new message_window(object,true,"Provided app token is wrong","APPTOKEN-ERROR");
+                        break;
+                    case -99:
+                        new message_window(object,true,"Your login session has expired","SESSION-EXPIRED");
+                        break;
+                    case -88:
+                        new message_window(object,true,"Database error when checking session token","");
+                        break;
+                }
+                new login_window(object,true,this,1);
+            }
+            
+        }catch(Exception e){
+            System.out.println("CONNECTOR ERROR: "+e.toString());
+        }
+        return parse_response(response);
     }
     
     /**
@@ -58,6 +142,25 @@ public class Connector {
             return null;
         }
     } 
+    /**
+     * Function for checkin user login
+     * @param user_login
+     * @return JsonElement
+     * /user-check/{app_token}/{session_token}/{user_login}
+     */
+    public JsonElement check_user_login(String user_login,JDialog object) throws UnirestException{
+        return this.commit("/user-check/"+oauth.app_token+"/"+oauth.session_token+"/"+user_login, object);
+    }
+    
+    /**
+     * Function for setting user email
+     * @param user_email
+     * @param object
+     * @return JsonElement
+     */
+    public JsonElement set_mail(String user_email,JDialog object) throws UnirestException{
+        return this.commit("/user-email-set/"+oauth.app_token+"/"+oauth.session_token+"/"+user_email,object);
+    }
     
     /**
      * Function for parasing response for data
@@ -78,7 +181,6 @@ public class Connector {
         try{
             logger.log("Trying to check /health of "+url_builder("/health")+")",0);
             HttpResponse <JsonNode> response = response_creator("/health");
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
             JsonParser jp = new JsonParser();
             logger.log("/health checked, returning response",0);
             health = true;
@@ -96,10 +198,12 @@ public class Connector {
      * @param password
      * @return JsonElement
      */
-    public JsonElement user_login(String user_login,String password) throws UnirestException{
+    public JsonElement user_login(String user_login,String password) throws UnirestException, NoSuchAlgorithmException{
         try{
             logger.log("Trying to login "+user_login,0);
-            HttpResponse <JsonNode> response = response_creator("/login/"+oauth.app_token+"/"+user_login+"/"+password);
+            Password_Validator pv = new Password_Validator(password);
+            HttpResponse <JsonNode> response = response_creator("/login/"+oauth.app_token+"/"+user_login+"/"+pv.hash());
+            logger.log("Creating login attempt: "+"/login/"+oauth.app_token+"/"+user_login+"/"+pv.hash(),0);
             if ( response != null){
                 Parser parser = new Parser(parse_response(response));
                 if ( parser.get_int("user_id") > 0 ){
@@ -117,6 +221,15 @@ public class Connector {
             logger.log("Failed to login ("+e.toString()+")",1);
             return null;
         }
+    }
+    
+    /**
+     * Function for getting user id
+     * @param user_id
+     * @return JsonElement
+     */
+    public JsonElement get_user(int user_id,JDialog object) throws UnirestException{
+        return commit("/user/"+oauth.app_token+"/"+user_id,object);
     }
     
     /**
@@ -163,7 +276,37 @@ public class Connector {
             logger.log("Failed to reset password ("+e.toString()+")", 1);
             return null;
         }
-        
+    }
+    
+    /**
+     * Function for checking user password
+     * @param password
+     * @return JsonElement
+     * @throws UnirestException 
+     */
+    public JsonElement user_checkpassword(String password) throws UnirestException{
+        try{
+            logger.log("Trying to check password for user",0);
+            HttpResponse<JsonNode> response = response_creator("/password-check/"+oauth.app_token+"/"+oauth.session_token+"/"+password);
+            logger.log("Created query : "+"/password-check/"+oauth.app_token+"/"+oauth.session_token+"/"+password,0);
+            if (response != null){
+                return parse_response(response);
+            }
+            return null;
+        }catch(UnirestException e){
+            logger.log("Failed to check password ("+e.toString()+")",1);
+            return null;
+        }
+    }
+    
+    public JsonElement user_resetpassword(String old_hash,String new_hash,JDialog object) throws UnirestException{
+        try{
+            logger.log("User trying to reset password",0);
+            return commit("/password-reset/"+oauth.app_token+"/"+oauth.session_token+"/"+old_hash+"/"+new_hash,object);
+        }catch(UnirestException e){
+            logger.log("Failed to reset user password ("+e.toString()+")", 0);
+            return null;
+        }
     }
     
 }

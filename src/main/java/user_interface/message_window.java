@@ -5,6 +5,9 @@ all rights reseved
  */
 package user_interface;
 
+import java.awt.Image;
+import java.awt.Toolkit;
+
 /**
  *Window for showing messages
  * @author kubaw
@@ -22,6 +25,7 @@ public class message_window extends javax.swing.JDialog {
         }
         field_message.setText(message);
         field_message.setEditable(false);
+        field_message.requestFocus();
         this.setLocationRelativeTo(null);
         setVisible(true);
     }
@@ -34,6 +38,7 @@ public class message_window extends javax.swing.JDialog {
         }
         field_message.setText(message);
         field_message.setEditable(false);
+        field_message.requestFocus();
         this.setLocationRelativeTo(null);
         setVisible(true);
     }
@@ -46,6 +51,7 @@ public class message_window extends javax.swing.JDialog {
         }
         field_message.setText(message);
         field_message.setEditable(false);
+        field_message.requestFocus();
         this.setLocationRelativeTo(null);
         setVisible(true);
     }
@@ -57,6 +63,7 @@ public class message_window extends javax.swing.JDialog {
         }
         field_message.setText(message);
         field_message.setEditable(false);
+        field_message.requestFocus();
         this.setLocationRelativeTo(null);
         setVisible(true);
     }
@@ -93,19 +100,19 @@ public class message_window extends javax.swing.JDialog {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 449, Short.MAX_VALUE)
-                    .addComponent(button_ok, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(button_ok, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 289, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 181, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(button_ok)
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
