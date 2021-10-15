@@ -12,6 +12,7 @@ import java.awt.Toolkit;
 import java.security.NoSuchAlgorithmException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.UnsupportedLookAndFeelException;
 import maintenence.Parser;
 import maintenence.Password_Validator;
 import user_interface.login_window;
@@ -32,8 +33,6 @@ public class changepassword_window extends javax.swing.JDialog {
         this.connector = connector;
         initComponents();
         this.setLocationRelativeTo(null);
-        Image icon = Toolkit.getDefaultToolkit().getImage("track_icon.ico");
-        this.setIconImage(icon);
         setVisible(true);
     }
     
@@ -163,10 +162,9 @@ public class changepassword_window extends javax.swing.JDialog {
                     Logger.getLogger(changepassword_window.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (UnirestException ex) {
                 Logger.getLogger(changepassword_window.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            }
+                    }
+                }
                 break;
-
             case 2:
                 new message_window(this,true,"New passwords doesn't match.","");
                 break;

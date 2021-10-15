@@ -6,10 +6,14 @@ all rights reseved
 package ui_components;
 
 import com.jakubwawak.track.connector.Connector;
+import com.jakubwawak.track.connector.Issue_Connector;
 import com.jakubwawak.track.connector.Share_Connector;
+import com.jakubwawak.track.connector.Task_Connector;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
 import maintenence.Parser;
+import user_interface.message_window;
 
 /**
  *
@@ -28,7 +32,19 @@ public class sharedtouser_window extends javax.swing.JDialog {
         initComponents();
         load_window();
         this.setLocationRelativeTo(null);
+        load_window_icon();
         setVisible(true);
+    }
+    /**
+     * Function for loading window icon
+     */
+    void load_window_icon(){
+        try{
+            ImageIcon img = new ImageIcon("track_icon.png");
+            this.setIconImage(img.getImage());
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
     
     /**
@@ -40,6 +56,39 @@ public class sharedtouser_window extends javax.swing.JDialog {
         Parser parser = new Parser(sh.show_sharedtome_projects(this));
         dlm.addAll(parser.get_arraylist("view"));
         list_projects.setModel(dlm);
+        try{
+            list_projects.setSelectedIndex(0);
+            int project_id = Integer.parseInt(list_projects.getSelectedValue().toString().split(":")[0]);
+            load_tasks(project_id);
+            load_issues(project_id);
+        }catch(Exception e){
+            new message_window(this,true,"List of shared to you objects is empty","");
+        }
+        
+    }
+    
+    /**
+     * Function for loading tasks
+     * @param project_id 
+     */
+    void load_tasks(int project_id) throws UnirestException{
+        Task_Connector tc = new Task_Connector(connector);
+        DefaultListModel dlm = new DefaultListModel();
+        Parser parser = new Parser(tc.load_task_glances(project_id, this));
+        dlm.addAll(parser.get_arraylist("view"));
+        list_tasks.setModel(dlm);
+    }
+    
+    /**
+     * Function for loading issues
+     * @param project_id 
+     */
+    void load_issues(int project_id) throws UnirestException{
+        Issue_Connector ic = new Issue_Connector(connector);
+        DefaultListModel dlm = new DefaultListModel();
+        Parser parser = new Parser(ic.load_issues_glances(project_id, this));
+        dlm.addAll(parser.get_arraylist("view"));
+        list_tasks.setModel(dlm);
     }
 
     /**
@@ -54,6 +103,13 @@ public class sharedtouser_window extends javax.swing.JDialog {
         jScrollPane1 = new javax.swing.JScrollPane();
         list_projects = new javax.swing.JList<>();
         jLabel1 = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        list_tasks = new javax.swing.JList<>();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        list_issues = new javax.swing.JList<>();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Projects shared to me");
@@ -63,16 +119,58 @@ public class sharedtouser_window extends javax.swing.JDialog {
             public int getSize() { return strings.length; }
             public String getElementAt(int i) { return strings[i]; }
         });
+        list_projects.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                list_projectsMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(list_projects);
 
         jLabel1.setText("Shared projects to me:");
+
+        list_tasks.setModel(new javax.swing.AbstractListModel<String>() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public String getElementAt(int i) { return strings[i]; }
+        });
+        jScrollPane2.setViewportView(list_tasks);
+
+        list_issues.setModel(new javax.swing.AbstractListModel<String>() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public String getElementAt(int i) { return strings[i]; }
+        });
+        jScrollPane3.setViewportView(list_issues);
+
+        jLabel2.setText("Connected objects");
+
+        jLabel3.setText("Tasks");
+
+        jLabel4.setText("Issues");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(475, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap(54, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(29, 29, 29)
+                                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(126, 126, 126)
+                                .addComponent(jLabel2)))
+                        .addGap(66, 66, 66))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(119, 119, 119)
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel4)
+                        .addGap(136, 136, 136)))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 235, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -81,20 +179,52 @@ public class sharedtouser_window extends javax.swing.JDialog {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(16, 16, 16)
-                .addComponent(jLabel1)
+                .addGap(15, 15, 15)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 406, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(5, 5, 5)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 324, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 324, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 405, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void list_projectsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_list_projectsMouseClicked
+        try{
+            int project_id = Integer.parseInt(list_projects.getSelectedValue().toString().split(":")[0]);
+            load_tasks(project_id);
+            load_issues(project_id);
+        }catch(NumberFormatException e){
+            new message_window(this,true,"Choosen project is not validated","ERROR");
+        }catch(Exception e){
+            new message_window(this,true,"Error\n"+e.toString(),"");
+        }
+    }//GEN-LAST:event_list_projectsMouseClicked
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JList<String> list_issues;
     private javax.swing.JList<String> list_projects;
+    private javax.swing.JList<String> list_tasks;
     // End of variables declaration//GEN-END:variables
 }

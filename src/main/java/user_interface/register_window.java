@@ -12,6 +12,7 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ImageIcon;
 import maintenence.Parser;
 
 /**
@@ -30,6 +31,7 @@ public class register_window extends javax.swing.JDialog {
         this.connector = connector;
         initComponents();
         this.setLocationRelativeTo(null);
+        load_window_icon();
         setVisible(true);
     }
     
@@ -38,7 +40,20 @@ public class register_window extends javax.swing.JDialog {
         this.connector = connector;
         initComponents();
         this.setLocationRelativeTo(null);
+        load_window_icon();
         setVisible(true);
+    }
+    
+    /**
+     * Function for loading window icon
+     */
+    void load_window_icon(){
+        try{
+            ImageIcon img = new ImageIcon("track_icon.png");
+            this.setIconImage(img.getImage());
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
     
     /**

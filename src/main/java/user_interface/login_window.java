@@ -5,6 +5,7 @@ all rights reseved
  */
 package user_interface;
 
+import com.formdev.flatlaf.FlatLightLaf;
 import ui_components.forgetpassword_window;
 import com.google.gson.JsonElement;
 import com.jakubwawak.track.connector.Connector;
@@ -14,6 +15,8 @@ import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.security.NoSuchAlgorithmException;
 import javax.swing.ImageIcon;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import maintenence.Parser;
 
 /**
@@ -31,7 +34,7 @@ public class login_window extends javax.swing.JDialog {
      * mode = 1 - session extension
      */
     int mode;
-    public login_window(java.awt.Frame parent, boolean modal,Connector connector,int mode) {
+    public login_window(java.awt.Frame parent, boolean modal,Connector connector,int mode){
         super(parent, modal);
         this.connector = connector;
         this.mode = mode;
@@ -40,9 +43,9 @@ public class login_window extends javax.swing.JDialog {
         if(mode == 1){
             this.setTitle("Login window - Session expired");
         }
+
         this.setLocationRelativeTo(null);
-        ImageIcon img = new ImageIcon("track_icon.ico");
-        this.setIconImage(img.getImage());
+        load_window_icon();
         setVisible(true);
     }
     
@@ -51,8 +54,8 @@ public class login_window extends javax.swing.JDialog {
         this.mode = mode;
         this.setTitle("Track Client "+this.connector.version+"/"+this.connector.bulid);
         initComponents();
-        this.setLocationRelativeTo(null);
-
+        this.setLocationRelativeTo(null);   
+        load_window_icon();
         setVisible(true);
     }
     
@@ -63,7 +66,20 @@ public class login_window extends javax.swing.JDialog {
         this.setTitle("Track Client "+this.connector.version+"/"+this.connector.bulid);
         initComponents();
         this.setLocationRelativeTo(null);
+        load_window_icon();
         setVisible(true);
+    }
+    
+    /**
+     * Function for loading window icon
+     */
+    void load_window_icon(){
+        try{
+            ImageIcon img = new ImageIcon("track_icon.png");
+            this.setIconImage(img.getImage());
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
     
     /**

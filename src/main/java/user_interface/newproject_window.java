@@ -9,6 +9,7 @@ import com.google.gson.JsonElement;
 import com.jakubwawak.track.connector.Connector;
 import com.jakubwawak.track.connector.Project_Connector;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import javax.swing.ImageIcon;
 import maintenence.Parser;
 
 /**
@@ -28,7 +29,20 @@ public class newproject_window extends javax.swing.JDialog {
         data = "active";
         initComponents();
         this.setLocationRelativeTo(null);
+        load_window_icon();
         setVisible(true);
+    }
+    
+    /**
+     * Function for loading window icon
+     */
+    void load_window_icon(){
+        try{
+            ImageIcon img = new ImageIcon("track_icon.png");
+            this.setIconImage(img.getImage());
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
     
     /**

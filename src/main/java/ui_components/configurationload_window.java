@@ -10,6 +10,7 @@ import com.jakubwawak.track.connector.Connector;
 import com.jakubwawak.track.connector.OAuth;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import java.io.IOException;
+import javax.swing.ImageIcon;
 import maintenence.Parser;
 import maintenence.TrackLogger;
 import user_interface.login_window;
@@ -38,7 +39,20 @@ public class configurationload_window extends javax.swing.JDialog {
         this.build = build;
         initComponents();
         this.setLocationRelativeTo(null);
+        load_window_icon();
         setVisible(true);
+    }
+    
+    /**
+     * Function for loading window icon
+     */
+    void load_window_icon(){
+        try{
+            ImageIcon img = new ImageIcon("track_icon.png");
+            this.setIconImage(img.getImage());
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
     
     /**

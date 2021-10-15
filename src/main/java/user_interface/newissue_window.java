@@ -12,6 +12,7 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.ImageIcon;
 import maintenence.Parser;
 
 /**
@@ -30,7 +31,19 @@ public class newissue_window extends javax.swing.JDialog {
         initComponents();
         load_projects();
         this.setLocationRelativeTo(null);
+        load_window_icon();
         setVisible(true);
+    }
+    /**
+     * Function for loading window icon
+     */
+    void load_window_icon(){
+        try{
+            ImageIcon img = new ImageIcon("track_icon.png");
+            this.setIconImage(img.getImage());
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
     
     /**

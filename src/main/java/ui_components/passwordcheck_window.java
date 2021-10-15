@@ -33,8 +33,6 @@ public class passwordcheck_window extends javax.swing.JDialog {
         this.connector = connector;
         initComponents();
         this.setLocationRelativeTo(null);
-        Image icon = Toolkit.getDefaultToolkit().getImage("track_icon.ico");
-        this.setIconImage(icon);
         setVisible(true);
     }
     /**

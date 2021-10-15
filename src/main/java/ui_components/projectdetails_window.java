@@ -32,8 +32,6 @@ public class projectdetails_window extends javax.swing.JDialog {
         this.project_id = project_id;
         initComponents();
         this.setLocationRelativeTo(null);
-        Image icon = Toolkit.getDefaultToolkit().getImage("track_icon.ico");
-        this.setIconImage(icon);
         load_window();
         setVisible(true);
     }

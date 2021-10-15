@@ -12,6 +12,7 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
 import maintenence.Parser;
 import user_interface.message_window;
 
@@ -28,8 +29,21 @@ public class shareproject_window extends javax.swing.JDialog {
         initComponents();
         this.connector = connector;
         load_window();
+        load_window_icon();
         this.setLocationRelativeTo(null);
         setVisible(true);
+    }
+    
+    /**
+     * Function for loading window icon
+     */
+    void load_window_icon(){
+        try{
+            ImageIcon img = new ImageIcon("track_icon.png");
+            this.setIconImage(img.getImage());
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
     
     /**

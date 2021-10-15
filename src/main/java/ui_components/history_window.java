@@ -25,8 +25,6 @@ public class history_window extends javax.swing.JDialog {
         initComponents();
         load_view(content);
         this.setLocationRelativeTo(null);
-        Image icon = Toolkit.getDefaultToolkit().getImage("track_icon.ico");
-        this.setIconImage(icon);
         setVisible(true);
     }
     

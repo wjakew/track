@@ -14,6 +14,7 @@ import java.awt.Frame;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
 import maintenence.Parser;
 import user_interface.message_window;
 
@@ -41,7 +42,20 @@ public class boardview_window extends javax.swing.JFrame {
         initComponents();
         this.setLocationRelativeTo(null);
         load_window();
+        load_window_icon();
         setVisible(true);
+    }
+    
+    /**
+     * Function for loading window icon
+     */
+    void load_window_icon(){
+        try{
+            ImageIcon img = new ImageIcon("track_icon.png");
+            this.setIconImage(img.getImage());
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
     
     /**

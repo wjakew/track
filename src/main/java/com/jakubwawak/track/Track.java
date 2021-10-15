@@ -5,11 +5,13 @@ all rights reseved
  */
 package com.jakubwawak.track;
 
+import com.formdev.flatlaf.FlatDarkLaf;
 import com.google.gson.JsonElement;
 import com.jakubwawak.track.connector.Connector;
 import com.jakubwawak.track.connector.OAuth;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import java.io.IOException;
+import javax.swing.UnsupportedLookAndFeelException;
 import maintenence.Parser;
 import maintenence.TrackLogger;
 import ui_components.configurationload_window;
@@ -22,8 +24,8 @@ import user_interface.message_window;
  */
 public class Track {
     
-    final static String version = "1.0.0";
-    final static String build = "TRA101021REV1CK";
+    final static String version = "1.0.1";
+    final static String build = "TRA151021REV1CK";
     
     static OAuth oauth;
     static TrackLogger logger;
@@ -34,6 +36,7 @@ public class Track {
      */
     public static void main(String args[]) throws IOException, UnirestException{
         try{
+            FlatDarkLaf.setup();
             show_header();
             System.out.println("Loading configuration...");
             oauth = new OAuth();
@@ -69,7 +72,7 @@ public class Track {
     /**
      * Main loop of the program
      */
-    public static void run() throws UnirestException{
+    public static void run() throws UnirestException, UnsupportedLookAndFeelException{
         logger.log("Connector initialization", 0);
         connector = new Connector(oauth,logger);
         logger.log("Connector initialized",0);

@@ -13,6 +13,7 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import java.awt.Image;
 import java.awt.Toolkit;
 import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
 import maintenence.Parser;
 import user_interface.message_window;
 
@@ -36,8 +37,6 @@ public class archive_window extends javax.swing.JDialog {
         this.connector = connector;
         this.mode = mode;
         this.setLocationRelativeTo(null);
-        Image icon = Toolkit.getDefaultToolkit().getImage("track_icon.ico");
-        this.setIconImage(icon);
         load_window();
         setVisible(true);
     }
@@ -46,6 +45,7 @@ public class archive_window extends javax.swing.JDialog {
      * Function for loading window content
      */
     void load_window() throws UnirestException{
+        load_window_icon();
         DefaultListModel dlm = new DefaultListModel();
         JsonElement data = null;
         switch(mode){
@@ -63,6 +63,17 @@ public class archive_window extends javax.swing.JDialog {
         Parser parser = new Parser(data);
         dlm.addAll(parser.get_arraylist("view"));
         list_archive.setModel(dlm);
+    }
+    /**
+     * Function for loading window icon
+     */
+    void load_window_icon(){
+        try{
+            ImageIcon img = new ImageIcon("track_icon.png");
+            this.setIconImage(img.getImage());
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
     
     

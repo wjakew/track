@@ -15,6 +15,7 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
 import javax.swing.ListModel;
 import maintenence.Parser;
 import ui_components.archive_window;
@@ -81,9 +82,21 @@ public class main_window extends javax.swing.JFrame {
         load_tasks_list(0);
         load_issues_list(0);
         load_boards_list();
+        load_window_icon();
         check_start();
     }
     
+    /**
+     * Function for loading window icon
+     */
+    void load_window_icon(){
+        try{
+            ImageIcon img = new ImageIcon("track_icon.png");
+            this.setIconImage(img.getImage());
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
     /**
      * Function for loading project list
      */

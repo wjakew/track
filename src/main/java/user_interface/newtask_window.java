@@ -11,6 +11,7 @@ import com.jakubwawak.track.connector.Project_Connector;
 import com.jakubwawak.track.connector.Task_Connector;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.ImageIcon;
 import maintenence.Parser;
 
 /**
@@ -29,7 +30,20 @@ public class newtask_window extends javax.swing.JDialog {
         initComponents();
         this.setLocationRelativeTo(null);
         load_projects_combobox();
+        load_window_icon();
         setVisible(true);
+    }
+    
+    /**
+     * Function for loading window icon
+     */
+    void load_window_icon(){
+        try{
+            ImageIcon img = new ImageIcon("track_icon.png");
+            this.setIconImage(img.getImage());
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
     
     /**

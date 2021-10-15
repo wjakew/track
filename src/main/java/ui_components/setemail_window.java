@@ -7,6 +7,7 @@ package ui_components;
 
 import com.jakubwawak.track.connector.Connector;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import javax.swing.ImageIcon;
 import maintenence.Parser;
 import user_interface.message_window;
 
@@ -25,7 +26,20 @@ public class setemail_window extends javax.swing.JDialog {
         this.connector = connector;
         initComponents();
         this.setLocationRelativeTo(null);
+        load_window_icon();
         setVisible(true);
+    }
+    
+    /**
+     * Function for loading window icon
+     */
+    void load_window_icon(){
+        try{
+            ImageIcon img = new ImageIcon("track_icon.png");
+            this.setIconImage(img.getImage());
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
 
     /**

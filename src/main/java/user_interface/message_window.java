@@ -5,8 +5,7 @@ all rights reseved
  */
 package user_interface;
 
-import java.awt.Image;
-import java.awt.Toolkit;
+import javax.swing.ImageIcon;
 
 /**
  *Window for showing messages
@@ -27,6 +26,7 @@ public class message_window extends javax.swing.JDialog {
         field_message.setEditable(false);
         field_message.requestFocus();
         this.setLocationRelativeTo(null);
+        load_window_icon();
         setVisible(true);
     }
     
@@ -40,7 +40,9 @@ public class message_window extends javax.swing.JDialog {
         field_message.setEditable(false);
         field_message.requestFocus();
         this.setLocationRelativeTo(null);
+        load_window_icon();
         setVisible(true);
+        
     }
     
     public message_window(javax.swing.JDialog parent, boolean modal,String message,String optional_title) {
@@ -53,6 +55,7 @@ public class message_window extends javax.swing.JDialog {
         field_message.setEditable(false);
         field_message.requestFocus();
         this.setLocationRelativeTo(null);
+        load_window_icon();
         setVisible(true);
     }
 
@@ -65,7 +68,20 @@ public class message_window extends javax.swing.JDialog {
         field_message.setEditable(false);
         field_message.requestFocus();
         this.setLocationRelativeTo(null);
+        load_window_icon();
         setVisible(true);
+    }
+    
+    /**
+     * Function for loading window icon
+     */
+    void load_window_icon(){
+        try{
+            ImageIcon img = new ImageIcon("track_icon.png");
+            this.setIconImage(img.getImage());
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
     /**
      * This method is called from within the constructor to initialize the form.
