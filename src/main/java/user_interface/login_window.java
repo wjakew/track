@@ -5,18 +5,14 @@ all rights reseved
  */
 package user_interface;
 
-import com.formdev.flatlaf.FlatLightLaf;
 import ui_components.forgetpassword_window;
 import com.google.gson.JsonElement;
 import com.jakubwawak.track.connector.Connector;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import java.awt.Image;
-import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.security.NoSuchAlgorithmException;
 import javax.swing.ImageIcon;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 import maintenence.Parser;
 
 /**
@@ -75,10 +71,28 @@ public class login_window extends javax.swing.JDialog {
      */
     void load_window_icon(){
         try{
+            load_image();
             ImageIcon img = new ImageIcon("track_icon.png");
             this.setIconImage(img.getImage());
+            label_serverinfo.setText(connector.api_information);
         }catch(Exception e){
             e.printStackTrace();
+        }
+    }
+    
+    /**
+     * Function for loading image
+     */
+    void load_image(){
+        try{
+            ImageIcon imageIcon = new ImageIcon("track_icon.png");
+            Image image = imageIcon.getImage();
+            Image newimg = image.getScaledInstance(140, 140,  java.awt.Image.SCALE_SMOOTH);
+            imageIcon = new ImageIcon(newimg);
+            label_icon.setIcon(imageIcon);
+        }catch(Exception e){
+            System.out.println("Failed to load track icon ("+e.toString()+")");
+            label_icon.setText("Icon error");
         }
     }
     
@@ -106,6 +120,8 @@ public class login_window extends javax.swing.JDialog {
         field_password = new javax.swing.JPasswordField();
         button_register = new javax.swing.JButton();
         button_reset = new javax.swing.JButton();
+        label_serverinfo = new javax.swing.JLabel();
+        label_icon = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Track Client");
@@ -145,47 +161,56 @@ public class login_window extends javax.swing.JDialog {
             }
         });
 
+        label_serverinfo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        label_serverinfo.setText("vX.X.X/XXXXXXXXXX/XXXXXXXXXXX");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(label_serverinfo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(button_login, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(button_reset, javax.swing.GroupLayout.DEFAULT_SIZE, 202, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(button_register, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(field_login)
-                            .addComponent(field_password, javax.swing.GroupLayout.DEFAULT_SIZE, 246, Short.MAX_VALUE))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                    .addComponent(button_reset, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(button_register, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(jLabel2)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(field_password, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(field_login, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(label_icon, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(label_icon, javax.swing.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(label_serverinfo)
                 .addGap(27, 27, 27)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(field_login, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(field_password, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(button_login)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(button_register)
-                    .addComponent(button_reset))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(button_register)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(button_reset)
+                .addContainerGap())
         );
 
         pack();
@@ -210,6 +235,8 @@ public class login_window extends javax.swing.JDialog {
                         //login successfull
                         if (mode == 0){
                             new message_window(this,true,"Welcome back "+parser.get_string("user_name")+"!","welcome!");
+                            // loading user_configuration
+                            connector.get_user_configuration(this);
                             new main_window(connector);
                             dispose();
                         }
@@ -248,6 +275,7 @@ public class login_window extends javax.swing.JDialog {
                         }
                         else if (parser.get_int("user_id") == -5){
                             new message_window(this,true,"Wrong password or login. Authorization failed.","AUTH_ERROR");
+                            field_password.setText("");
                         }
                         else if (parser.get_int("user_id") == -1){
                             new message_window(this,true,"No user with that login or password found","NOUSER_ERROR");
@@ -256,12 +284,14 @@ public class login_window extends javax.swing.JDialog {
                             new message_window(this,true,"Welcome back "+parser.get_string("user_name")+"!","welcome!");
                             //login successfull
                             if (mode == 0)
+                                // loading user_configuration
+                                connector.get_user_configuration(this);
                                 new main_window(connector);
                             dispose();
                         }
                     }
                     else{
-
+                        new message_window(this,true,"Failed to connect to server","ERROR");
                     }
                 } catch (UnirestException ex) {
                     new message_window(this,true,"ERROR\n"+ex.toString(),"ERROR");
@@ -288,5 +318,7 @@ public class login_window extends javax.swing.JDialog {
     private javax.swing.JPasswordField field_password;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel label_icon;
+    private javax.swing.JLabel label_serverinfo;
     // End of variables declaration//GEN-END:variables
 }

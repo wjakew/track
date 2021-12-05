@@ -7,6 +7,7 @@ package maintenence;
 
 import com.google.gson.JsonElement;
 import java.util.ArrayList;
+import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -70,8 +71,24 @@ public class Parser {
      * @param key
      * @return ArrayList
      */
-    public ArrayList get_arraylist(String key){
+    public ArrayList<String> get_arraylist(String key){
         ArrayList<String> data = new ArrayList<>();
+        JSONArray array = obj.getJSONArray(key);
+        if ( array != null){
+            for(int i = 0; i<array.length(); i++){
+                data.add(array.get(i).toString());
+            }
+        }
+        return data;
+    }
+    
+    /**
+     * Function for List
+     * @param key
+     * @return List
+     */
+    public List<String> get_listlist(String key){
+        List<String> data = new ArrayList<>();
         JSONArray array = obj.getJSONArray(key);
         if ( array != null){
             for(int i = 0; i<array.length(); i++){

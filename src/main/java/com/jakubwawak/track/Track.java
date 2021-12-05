@@ -24,8 +24,8 @@ import user_interface.message_window;
  */
 public class Track {
     
-    final static String version = "1.0.1";
-    final static String build = "TRA151021REV1CK";
+    final static String version = "1.1.0";
+    final static String build = "TRA051221REV1CK";
     
     static OAuth oauth;
     static TrackLogger logger;
@@ -92,6 +92,7 @@ public class Track {
                 System.out.println("API "+parser.get_string("version")+ " "+parser.get_string("build_number"));
                 logger.log("Connected to: "+oauth.server_ip+
                         " ("+parser.get_string("version")+"/"+parser.get_string("build_number")+")",0);
+                connector.api_information = "API - "+oauth.server_ip+"/"+parser.get_string("version")+"/"+parser.get_string("build_number");
                 new login_window(connector,0);
             }
             else{

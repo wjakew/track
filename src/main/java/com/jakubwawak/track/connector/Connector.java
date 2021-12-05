@@ -35,6 +35,10 @@ public class Connector {
     public Date ldt;
     public boolean error;
     public String version,bulid;
+    public String api_information;
+    // for storing configuration data
+    public String config1,config2,config3;
+    
     /**
      * Constructor
      * @param oauth 
@@ -42,6 +46,10 @@ public class Connector {
     public Connector(OAuth oauth,TrackLogger logger){
         this.oauth = oauth;
         this.logger = logger;
+        api_information = "";
+        config1 = "";
+        config2 = "";
+        config3 = "";
         ldt = new Date();
         error = false;
     }
@@ -143,7 +151,7 @@ public class Connector {
         }
     } 
     /**
-     * Function for checkin user login
+     * Function for checking user login
      * @param user_login
      * @return JsonElement
      * /user-check/{app_token}/{session_token}/{user_login}
@@ -163,12 +171,28 @@ public class Connector {
     }
     
     /**
-     * Function for parasing response for data
+     * Function for loading user configuration
+     * @param object
+     * @throws UnirestException 
+     */
+    public void get_user_configuration(JDialog object) throws UnirestException{
+        try{
+            Parser parser = new Parser(this.commit("/user-configuration/"+oauth.app_token+"/"+oauth.session_token, object));
+            config1 = parser.get_string("config1");
+            config2 = parser.get_string("config2");
+            config3 = parser.get_string("config3");
+            logger.log("User configuration loaded ("+config1+"/"+config2+"/"+config3+")",0);
+        }catch(Exception e){
+            logger.log("Failed to get user configuration",1);
+        }
+    }
+    
+    /**
+     * Function for parsing response for data
      * @param data
      * @return JsonElement
      */
     JsonElement parse_response(HttpResponse<JsonNode> data){
-        logger.log("Parasing response for data", 0);
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         JsonParser jp = new JsonParser();
         return jp.parse(data.getBody().toString());

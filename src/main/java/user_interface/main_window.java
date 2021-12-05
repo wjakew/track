@@ -21,6 +21,7 @@ import maintenence.Parser;
 import ui_components.archive_window;
 import ui_components.boardview_window;
 import ui_components.changepassword_window;
+import ui_components.configuration_window;
 import ui_components.debug_window;
 import ui_components.issuedetails_window;
 import ui_components.newboard_window;
@@ -32,7 +33,7 @@ import ui_components.shareproject_window;
 import ui_components.taskdetails_window;
 
 /**
- *
+ *Main window for Track
  * @author Jakub Wawak
  */
 public class main_window extends javax.swing.JFrame {
@@ -78,6 +79,8 @@ public class main_window extends javax.swing.JFrame {
         menu_user_session.setEnabled(false);
         menu_user_time.setText(connector.oauth.apr_login_time.toString());
         menu_user_time.setEnabled(false);
+        menu_server_ip.setText("Connected to: "+connector.oauth.server_ip);
+        menu_server_ip.setEnabled(false);
         load_projects_list();
         load_tasks_list(0);
         load_issues_list(0);
@@ -180,6 +183,7 @@ public class main_window extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         button_boardview = new javax.swing.JButton();
         button_newboard = new javax.swing.JButton();
+        button_snippets = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         menu_actions = new javax.swing.JMenu();
         menu_reload_window = new javax.swing.JMenuItem();
@@ -210,9 +214,11 @@ public class main_window extends javax.swing.JFrame {
         menu_check_password = new javax.swing.JMenuItem();
         menu_change_password = new javax.swing.JMenuItem();
         menu_set_emailaddress = new javax.swing.JMenuItem();
+        menu_user_configuration = new javax.swing.JMenuItem();
         menu_information = new javax.swing.JMenu();
         menu_user_session = new javax.swing.JMenuItem();
         menu_user_time = new javax.swing.JMenuItem();
+        menu_server_ip = new javax.swing.JMenuItem();
         menu_reload_session = new javax.swing.JMenuItem();
         menu_debug = new javax.swing.JMenuItem();
 
@@ -285,6 +291,13 @@ public class main_window extends javax.swing.JFrame {
         button_newboard.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 button_newboardActionPerformed(evt);
+            }
+        });
+
+        button_snippets.setText("Snippets");
+        button_snippets.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                button_snippetsActionPerformed(evt);
             }
         });
 
@@ -491,6 +504,14 @@ public class main_window extends javax.swing.JFrame {
         });
         menu_myprofile.add(menu_set_emailaddress);
 
+        menu_user_configuration.setText("User configuration");
+        menu_user_configuration.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menu_user_configurationActionPerformed(evt);
+            }
+        });
+        menu_myprofile.add(menu_user_configuration);
+
         jMenuBar1.add(menu_myprofile);
 
         menu_information.setText("Information");
@@ -500,6 +521,9 @@ public class main_window extends javax.swing.JFrame {
 
         menu_user_time.setText("user_time");
         menu_information.add(menu_user_time);
+
+        menu_server_ip.setText("server_ip");
+        menu_information.add(menu_server_ip);
 
         menu_reload_session.setText("Reload session");
         menu_reload_session.addActionListener(new java.awt.event.ActionListener() {
@@ -539,25 +563,26 @@ public class main_window extends javax.swing.JFrame {
                         .addComponent(label_issues)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(button_loadall)))
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addGroup(layout.createSequentialGroup()
-                            .addGap(4, 4, 4)
-                            .addComponent(jLabel2)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(button_newboard, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(layout.createSequentialGroup()
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 244, Short.MAX_VALUE)
-                                .addComponent(button_projectdetails, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jScrollPane4)))
-                        .addGroup(layout.createSequentialGroup()
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(button_boardview, javax.swing.GroupLayout.PREFERRED_SIZE, 244, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(4, 4, 4)
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(button_newboard, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel1)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 244, Short.MAX_VALUE)
+                            .addComponent(button_projectdetails, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jScrollPane4)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(button_boardview, javax.swing.GroupLayout.PREFERRED_SIZE, 244, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel1)
+                        .addGap(18, 18, 18)
+                        .addComponent(button_snippets, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -569,7 +594,8 @@ public class main_window extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel1)
                             .addComponent(button_loadall)
-                            .addComponent(label_issues)))
+                            .addComponent(label_issues)
+                            .addComponent(button_snippets)))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(label_tasks)))
@@ -905,12 +931,25 @@ public class main_window extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_menu_sharedtomeActionPerformed
 
+    private void menu_user_configurationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menu_user_configurationActionPerformed
+        new configuration_window(this,true,connector);
+    }//GEN-LAST:event_menu_user_configurationActionPerformed
+
+    private void button_snippetsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_snippetsActionPerformed
+        try {
+            new snippets_window(connector);
+        } catch (UnirestException ex) {
+            new message_window(this,true,"Error\n"+ex.toString(),"ERROR");
+        }
+    }//GEN-LAST:event_button_snippetsActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton button_boardview;
     private javax.swing.JButton button_loadall;
     private javax.swing.JButton button_newboard;
     private javax.swing.JButton button_projectdetails;
+    private javax.swing.JButton button_snippets;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JMenuBar jMenuBar1;
@@ -948,6 +987,7 @@ public class main_window extends javax.swing.JFrame {
     private javax.swing.JMenuItem menu_removeboard;
     private javax.swing.JMenuItem menu_removeissue;
     private javax.swing.JMenuItem menu_removetask;
+    private javax.swing.JMenuItem menu_server_ip;
     private javax.swing.JMenuItem menu_set_emailaddress;
     private javax.swing.JMenu menu_shared;
     private javax.swing.JMenuItem menu_sharedprojects;
@@ -956,6 +996,7 @@ public class main_window extends javax.swing.JFrame {
     private javax.swing.JMenuItem menu_showdetails;
     private javax.swing.JMenu menu_task;
     private javax.swing.JMenuItem menu_taskdetails;
+    private javax.swing.JMenuItem menu_user_configuration;
     private javax.swing.JMenuItem menu_user_session;
     private javax.swing.JMenuItem menu_user_time;
     // End of variables declaration//GEN-END:variables
