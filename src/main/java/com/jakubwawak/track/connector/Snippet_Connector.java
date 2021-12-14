@@ -69,4 +69,15 @@ public class Snippet_Connector {
     public JsonElement get_snippet(int user_snippet_id,JFrame object) throws UnirestException{
         return connector.commit("/snippet-get/"+connector.oauth.app_token+"/"+connector.oauth.session_token+"/"+user_snippet_id,object);
     }
+    
+    /**
+     * Function for sharing snippet data
+     * @param user_snippet_id
+     * @param recipient_id
+     * @param object
+     * @return JsonElement
+     */
+    public JsonElement share_snippet(int user_snippet_id,int recipient_id,JDialog object) throws UnirestException{
+        return connector.commit("/snippet-share/"+connector.oauth.app_token+"/"+connector.oauth.session_token+"/"+user_snippet_id+"/"+recipient_id,object);
+    }
 }

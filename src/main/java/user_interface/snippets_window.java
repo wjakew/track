@@ -10,20 +10,14 @@ import com.jakubwawak.track.connector.Snippet_Connector;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import java.awt.Color;
 import java.awt.Component;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JTable;
-import javax.swing.JTextArea;
-import javax.swing.UIManager;
-import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import maintenence.Parser;
+import ui_components.snippetshare_window;
 
 /**
  *Window for creating 
@@ -116,6 +110,7 @@ public class snippets_window extends javax.swing.JFrame {
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         menu_createsnippet = new javax.swing.JMenuItem();
+        menu_sharesnippet = new javax.swing.JMenuItem();
         menu_removesnippet = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -170,6 +165,14 @@ public class snippets_window extends javax.swing.JFrame {
             }
         });
         jMenu1.add(menu_createsnippet);
+
+        menu_sharesnippet.setText("Share snippet");
+        menu_sharesnippet.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menu_sharesnippetActionPerformed(evt);
+            }
+        });
+        jMenu1.add(menu_sharesnippet);
 
         menu_removesnippet.setText("Remove snippet");
         menu_removesnippet.addActionListener(new java.awt.event.ActionListener() {
@@ -280,6 +283,13 @@ public class snippets_window extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_menu_removesnippetActionPerformed
 
+    private void menu_sharesnippetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menu_sharesnippetActionPerformed
+        if ( user_snippet_id != 0 ){
+            System.out.println("Snippet selected user_snippet_id = "+user_snippet_id);
+            new snippetshare_window(this,true,connector,user_snippet_id);
+        }
+    }//GEN-LAST:event_menu_sharesnippetActionPerformed
+
 class MyRenderer extends DefaultTableCellRenderer {
    Color bg, fg;
    
@@ -311,6 +321,7 @@ class MyRenderer extends DefaultTableCellRenderer {
     private javax.swing.JLabel label_updated;
     private javax.swing.JMenuItem menu_createsnippet;
     private javax.swing.JMenuItem menu_removesnippet;
+    private javax.swing.JMenuItem menu_sharesnippet;
     private javax.swing.JTable table_snippets;
     // End of variables declaration//GEN-END:variables
 }

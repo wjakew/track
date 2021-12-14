@@ -1,4 +1,4 @@
 confgfile
-server_ip%192.168.1.101
+server_ip%localhost
 app_token%testtoken
 user_name%null
