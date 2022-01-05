@@ -56,6 +56,23 @@ public class Task_Connector {
     }
     
     /**
+     * Function for loading task comments
+     * @param task_id
+     * @param object
+     * @return JsonElement
+     * @throws UnirestException 
+     */
+    public JsonElement load_task_comments(int task_id,JDialog object) throws UnirestException{
+        return connector.commit("/task-comment-list/"+connector.oauth.app_token+"/"+connector.oauth.session_token+"/"+task_id,object);
+    }
+    
+    public JsonElement add_task_comment(int task_id,String task_comment_content,JDialog object) throws UnirestException{
+        task_comment_content = task_comment_content.replaceAll(" ", "%20");
+        return connector.commit("/task-comment-add/"+connector.oauth.app_token+"/"
+                +connector.oauth.session_token+"/"+task_id+"/"+task_comment_content,object);
+    }
+    
+    /**
      * Function for getting task history data in Viewer
      * @param task_id
      * @param object
