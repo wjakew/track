@@ -9,6 +9,7 @@ import com.jakubwawak.track.connector.Connector;
 import com.jakubwawak.track.connector.ToDo_Connector;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import java.util.ArrayList;
+import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.table.DefaultTableModel;
 import maintenence.Parser;
@@ -51,10 +52,12 @@ public class todo_window extends javax.swing.JFrame {
             }
             ToDo_Connector tdc = new ToDo_Connector(connector);
             Parser parser = new Parser(tdc.get_todo_list(user_id, this,mode));
-            DefaultTableModel dtm = new DefaultTableModel();
-            dtm.addColumn("ToDo");
+            DefaultListModel dtm = new DefaultListModel();
             ArrayList<String> todo_glances = parser.get_arraylist("view");
-            dtm.addRow(todo_glances.toArray(new String[todo_glances.size()]));
+            for(String line : todo_glances){
+                System.out.println(line);
+            }
+            dtm.addAll(todo_glances);
             table_todo.setModel(dtm);
         }catch(Exception e){
             new message_window(this,true,"Error\nFailed to load todo list\nCheck API log","ERROR");
@@ -90,27 +93,14 @@ public class todo_window extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane1 = new javax.swing.JScrollPane();
-        table_todo = new javax.swing.JTable();
         button_filter = new javax.swing.JButton();
         button_add = new javax.swing.JButton();
         button_state = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        table_todo = new javax.swing.JList<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Track ToDo");
-
-        table_todo.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null},
-                {null},
-                {null},
-                {null}
-            },
-            new String [] {
-                "ToDo"
-            }
-        ));
-        jScrollPane1.setViewportView(table_todo);
 
         button_filter.setText("Only undone");
         button_filter.addActionListener(new java.awt.event.ActionListener() {
@@ -133,6 +123,13 @@ public class todo_window extends javax.swing.JFrame {
             }
         });
 
+        table_todo.setModel(new javax.swing.AbstractListModel<String>() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public String getElementAt(int i) { return strings[i]; }
+        });
+        jScrollPane2.setViewportView(table_todo);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -140,15 +137,13 @@ public class todo_window extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 291, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jScrollPane2)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(button_filter))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(button_state)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 160, Short.MAX_VALUE)
                         .addComponent(button_add, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
@@ -157,8 +152,8 @@ public class todo_window extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(button_filter)
-                .addGap(5, 5, 5)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 374, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(4, 4, 4)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(button_add)
@@ -206,8 +201,7 @@ public class todo_window extends javax.swing.JFrame {
 
     private void button_stateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_stateActionPerformed
         try{
-            int row = table_todo.getSelectedRow();
-            int todo_id = Integer.parseInt(table_todo.getModel().getValueAt(0,row).toString().split(":")[0]);
+            int todo_id = Integer.parseInt(table_todo.getSelectedValue().split(":")[0]);
             new todostate_window(this,true,connector,todo_id);
         }catch(NumberFormatException e){
             new message_window(this,true,"No todo selected","");
@@ -220,7 +214,7 @@ public class todo_window extends javax.swing.JFrame {
     private javax.swing.JButton button_add;
     private javax.swing.JButton button_filter;
     private javax.swing.JButton button_state;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable table_todo;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JList<String> table_todo;
     // End of variables declaration//GEN-END:variables
 }

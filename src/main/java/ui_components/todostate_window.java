@@ -47,6 +47,7 @@ public class todostate_window extends javax.swing.JDialog {
         button_set = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("New todo state");
 
         combobox_state.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Not done", "In work", "Done" }));
 

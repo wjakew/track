@@ -50,6 +50,8 @@ public class ToDo_Connector {
      */
     public JsonElement add_todo(String todo_title,String todo_content,int todo_impor,
             int todo_colour,JDialog object) throws UnirestException{
+        todo_title = todo_title.replaceAll(" ", "%20");
+        todo_content = todo_content.replaceAll(" ", "%20");
         return connector.commit("/todo-add/"+connector.oauth.app_token+"/"+connector.oauth.session_token+"/"
         +todo_title+"/"+todo_content+"/"+todo_impor+"/"+todo_colour,object);
     }
