@@ -38,7 +38,7 @@ public class issuedetails_window extends javax.swing.JDialog {
         this.connector = connector;
         this.issue_id = issue_id;
         initComponents();
-        this.setLocationRelativeTo(null);
+        this.setLocationRelativeTo(parent);
         load_window();
         load_window_icon();
         setVisible(true);

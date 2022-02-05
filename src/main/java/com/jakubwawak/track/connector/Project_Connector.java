@@ -49,6 +49,42 @@ public class Project_Connector {
     }
     
     /**
+     * Function for adding project members
+     * @param object
+     * @param project_id
+     * @param user_id
+     * @return JsonElement
+     */
+    public JsonElement add_project_members(JDialog object, int project_id,int user_id) throws UnirestException{
+        return connector.commit("/project-members-add/"+connector.oauth.app_token+"/"+connector.oauth.session_token+"/"+project_id+"/"+user_id,object);
+    }
+    
+    /**
+     * Function for removing project members
+     * @param object
+     * @param project_id
+     * @param user_id
+     * @return JsonElement
+     * @throws UnirestException 
+     */
+    public JsonElement remove_project_members(JFrame object, int project_id,int user_id) throws UnirestException{
+        return connector.commit("/project-members-remove/"+connector.oauth.app_token+"/"+connector.oauth.session_token+"/"+project_id+"/"+user_id,object);
+    }
+    
+    /**
+     * Function for loading project member glances
+     * @param object
+     * @return JsonElement
+     * @throws UnirestException 
+     */
+    public JsonElement load_projects_glances_member(JFrame object) throws UnirestException{
+        return connector.commit("/project-viewer-member/"+connector.oauth.app_token+"/"+connector.oauth.session_token,object);
+    }
+    public JsonElement load_projects_glances_member(JDialog object) throws UnirestException{
+        return connector.commit("/project-viewer-member/"+connector.oauth.app_token+"/"+connector.oauth.session_token,object);
+    }
+    
+    /**
      * Function for loading project glances
      * @param object
      * @return
@@ -75,7 +111,7 @@ public class Project_Connector {
      * @return JsonElement
      * @throws UnirestException 
      */
-    public JsonElement load_project(int project_id,JDialog object) throws UnirestException{
+    public JsonElement load_project(int project_id,JFrame object) throws UnirestException{
         return connector.commit("/project-get/"+connector.oauth.app_token+"/"+connector.oauth.session_token+"/"+project_id,object);
     }
 }

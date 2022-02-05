@@ -25,7 +25,7 @@ public class debug_window extends javax.swing.JDialog {
         super(parent, modal);
         this.connector = connector;
         initComponents();
-        this.setLocationRelativeTo(null);
+        this.setLocationRelativeTo(parent);
         load_window();
         setVisible(true);
     }

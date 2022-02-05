@@ -11,6 +11,7 @@ import com.jakubwawak.track.connector.Project_Connector;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import maintenence.Parser;
@@ -25,9 +26,22 @@ public class newissue_window extends javax.swing.JDialog {
      * Creates new form newissue_window
      */
     Connector connector;
+    int project_id;
     public newissue_window(java.awt.Frame parent, boolean modal,Connector connector) throws UnirestException {
         super(parent, modal);
         this.connector = connector;
+        project_id = -1;
+        initComponents();
+        load_projects();
+        this.setLocationRelativeTo(null);
+        load_window_icon();
+        setVisible(true);
+    }
+    
+    public newissue_window(javax.swing.JDialog parent, boolean modal,Connector connector,int project_id) throws UnirestException {
+        super(parent, modal);
+        this.connector = connector;
+        this.project_id = project_id;
         initComponents();
         load_projects();
         this.setLocationRelativeTo(null);
@@ -53,9 +67,26 @@ public class newissue_window extends javax.swing.JDialog {
         DefaultComboBoxModel dcm = new DefaultComboBoxModel();
         Project_Connector pc = new Project_Connector(connector);
         Parser parser = new Parser(pc.load_projects_glances(this));
+        ArrayList<String> data = parser.get_arraylist("view");
         dcm.addAll(parser.get_arraylist("view"));
         combobox_projects.setModel(dcm);
         combobox_projects.setSelectedIndex(0);
+        int index = -1;
+        
+        if ( project_id != -1 ){
+            for(String element : data){
+                if(element.contains(Integer.toString(project_id))){
+                    index = data.indexOf(index);
+                    break;
+                }
+            }
+        }
+        
+        if ( index != -1 ){
+            dcm.removeAllElements();
+            dcm.addElement(Integer.toString(project_id)+":");
+            combobox_projects.setEnabled(false);
+        }
     }
     
     /**
@@ -124,6 +155,7 @@ public class newissue_window extends javax.swing.JDialog {
 
         combobox_projects.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
+        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel3.setText("Description");
 
         jLabel4.setText("Priority");
@@ -160,9 +192,12 @@ public class newissue_window extends javax.swing.JDialog {
                         .addComponent(combobox_projects, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(1, 1, 1)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(field_name)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(field_name)))))
                 .addGap(10, 10, 10))
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
@@ -175,10 +210,6 @@ public class newissue_window extends javax.swing.JDialog {
                         .addComponent(field_date, javax.swing.GroupLayout.DEFAULT_SIZE, 208, Short.MAX_VALUE))
                     .addComponent(button_create, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel3)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(button_reset)
@@ -195,9 +226,9 @@ public class newissue_window extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(field_name, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1))
-                .addGap(13, 13, 13)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(7, 7, 7)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 272, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)

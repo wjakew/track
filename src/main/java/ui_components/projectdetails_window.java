@@ -10,26 +10,33 @@ import com.jakubwawak.track.connector.Issue_Connector;
 import com.jakubwawak.track.connector.Project_Connector;
 import com.jakubwawak.track.connector.Task_Connector;
 import com.mashape.unirest.http.exceptions.UnirestException;
-import java.awt.Image;
-import java.awt.Toolkit;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
 import maintenence.Parser;
+import user_interface.main_window;
+import user_interface.message_window;
 
 /**
  *
  * @author kubaw
  */
-public class projectdetails_window extends javax.swing.JDialog {
+public class projectdetails_window extends javax.swing.JFrame {
 
     /**
      * Creates new form projectdetails_window
      */
     Connector connector;
     int project_id;
+    boolean owner;
+    ArrayList<String> members;
     public projectdetails_window(java.awt.Frame parent, boolean modal,Connector connector,int project_id) throws UnirestException {
-        super(parent, modal);
         this.connector = connector;
         this.project_id = project_id;
+        owner = false;
+        members = new ArrayList<>();
         initComponents();
         this.setLocationRelativeTo(null);
         load_window();
@@ -43,6 +50,13 @@ public class projectdetails_window extends javax.swing.JDialog {
         load_project_data();
         load_tasks();
         load_issues();
+        load_members();
+        load_window_icon();
+        
+        if ( !owner ){
+            button_addmember.setEnabled(false);
+            button_removemember.setEnabled(false);
+        }
     }
     
     /**
@@ -58,6 +72,27 @@ public class projectdetails_window extends javax.swing.JDialog {
         field_owner.setText("Owner: "+user_parser.get_string("user_login"));
         field_dateofcreation.setText("Date of creation: "+parser.get_string("project_creation_date"));
         field_desc.setEditable(false);
+        members = parser.get_arraylist("project_members");
+        int owner_id = parser.get_int("user_id");
+        if ( owner_id == connector.oauth.user_id ){
+            owner = true;
+        }
+        else{
+            owner = false;
+        }
+        this.setTitle(parser.get_string("project_name") + "- details");
+    }
+    
+    /**
+     * Function for loading window icon
+     */
+    void load_window_icon(){
+        try{
+            ImageIcon img = new ImageIcon("track_icon.png");
+            this.setIconImage(img.getImage());
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
     
     /**
@@ -72,12 +107,32 @@ public class projectdetails_window extends javax.swing.JDialog {
         list_tasks.setModel(dlm);
     }
     
+    /**
+     * Function for loading issues data
+     * @throws UnirestException 
+     */
     void load_issues() throws UnirestException{
         DefaultListModel dlm = new DefaultListModel();
         Issue_Connector ic = new Issue_Connector(connector);
         Parser parser = new Parser(ic.load_issues_glances(project_id, this));
         dlm.addAll(parser.get_arraylist("view"));
         list_issues.setModel(dlm);
+    }
+    
+    /**
+     * Function for loading members data
+     */
+    void load_members(){
+        DefaultListModel dlm = new DefaultListModel();
+        dlm.addAll(members);
+        list_members.setModel(dlm);
+    }
+    
+    void load_members_only() throws UnirestException{
+        Project_Connector pc = new Project_Connector(connector);
+        Parser parser = new Parser(pc.load_project(project_id, this));
+        members = parser.get_arraylist("project_members");
+        load_members_only();
     }
 
     /**
@@ -102,17 +157,25 @@ public class projectdetails_window extends javax.swing.JDialog {
         list_issues = new javax.swing.JList<>();
         jLabel6 = new javax.swing.JLabel();
         field_dateofcreation = new javax.swing.JLabel();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        list_members = new javax.swing.JList<>();
+        jLabel1 = new javax.swing.JLabel();
+        button_addmember = new javax.swing.JButton();
+        button_removemember = new javax.swing.JButton();
+        button_mainwindow = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Project Details");
 
         field_name.setFont(new java.awt.Font("Tahoma", 0, 36)); // NOI18N
+        field_name.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         field_name.setText("Project Name");
 
         field_desc.setColumns(20);
         field_desc.setRows(5);
         jScrollPane1.setViewportView(field_desc);
 
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("Description");
 
         field_owner.setText("Owner:");
@@ -126,7 +189,8 @@ public class projectdetails_window extends javax.swing.JDialog {
         });
         jScrollPane2.setViewportView(list_tasks);
 
-        jLabel5.setText("Connected tasks:");
+        jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel5.setText("Connected tasks");
 
         list_issues.setModel(new javax.swing.AbstractListModel<String>() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
@@ -135,9 +199,40 @@ public class projectdetails_window extends javax.swing.JDialog {
         });
         jScrollPane3.setViewportView(list_issues);
 
-        jLabel6.setText("Connected issues:");
+        jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel6.setText("Connected issues");
 
         field_dateofcreation.setText("Date of creation:");
+
+        list_members.setModel(new javax.swing.AbstractListModel<String>() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public String getElementAt(int i) { return strings[i]; }
+        });
+        jScrollPane4.setViewportView(list_members);
+
+        jLabel1.setText("Members:");
+
+        button_addmember.setText("+");
+        button_addmember.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                button_addmemberActionPerformed(evt);
+            }
+        });
+
+        button_removemember.setText("-");
+        button_removemember.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                button_removememberActionPerformed(evt);
+            }
+        });
+
+        button_mainwindow.setText("Main window");
+        button_mainwindow.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                button_mainwindowActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -146,72 +241,132 @@ public class projectdetails_window extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(field_name, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(field_projectid, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(field_owner, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(57, 57, 57))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(field_dateofcreation, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(jLabel5)
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 308, Short.MAX_VALUE)
-                        .addComponent(jScrollPane2))
-                    .addComponent(jLabel6))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(field_name, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 343, Short.MAX_VALUE)
+                            .addComponent(field_dateofcreation, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jScrollPane4)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(button_removemember)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(button_addmember))
+                            .addComponent(field_projectid, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(field_owner, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 308, Short.MAX_VALUE)
+                            .addComponent(jScrollPane2)
+                            .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(button_mainwindow)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(29, 29, 29)
-                .addComponent(field_name, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(1, 1, 1)
-                .addComponent(jLabel2)
-                .addGap(3, 3, 3)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap()
+                .addComponent(button_mainwindow)
+                .addGap(0, 0, 0)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(field_name, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(1, 1, 1)
+                        .addComponent(jLabel2)
+                        .addGap(3, 3, 3)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel5)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane2)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(field_owner)
-                    .addComponent(field_projectid))
-                .addGap(18, 18, 18)
-                .addComponent(field_dateofcreation)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap(22, Short.MAX_VALUE)
-                .addComponent(jLabel5)
+                    .addComponent(jLabel6))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(7, 7, 7)
-                .addComponent(jLabel6)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(23, 23, 23))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(field_projectid)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(field_dateofcreation)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel1)
+                            .addComponent(button_removemember)
+                            .addComponent(button_addmember))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 228, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void button_mainwindowActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_mainwindowActionPerformed
+        try {
+            new main_window(connector);
+        } catch (UnirestException ex) {
+            new message_window(this,true,"Error\n"+ex.toString(),"ERROR");
+        }
+    }//GEN-LAST:event_button_mainwindowActionPerformed
+
+    private void button_addmemberActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_addmemberActionPerformed
+        try {
+            new addmember_window(this,true,connector,project_id);
+            load_members();
+        } catch (Exception ex) {
+            new message_window(this,true,"Error\n"+ex.toString(),"ERROR");
+        }
+    }//GEN-LAST:event_button_addmemberActionPerformed
+
+    private void button_removememberActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_removememberActionPerformed
+        String selected = list_members.getSelectedValue().toString();
+        try{
+            if ( !selected.equals("") ){
+                Parser parser = new Parser(connector.check_user_login(selected, this));
+                int user_id = parser.get_int("user_id");
+                if (user_id > 0){
+                    Project_Connector pc = new Project_Connector(connector);
+                    parser = new Parser(pc.remove_project_members(this, project_id, user_id));
+                    if ( parser.get_int("flag") == 2 ){
+                        new message_window(this,true,"Member removed","");
+                        load_members();
+                    }
+                    else{
+                        new message_window(this,true,"Error removing member","ERROR");
+                    }
+                }
+            }
+        }catch(Exception e){}
+    }//GEN-LAST:event_button_removememberActionPerformed
+
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton button_addmember;
+    private javax.swing.JButton button_mainwindow;
+    private javax.swing.JButton button_removemember;
     private javax.swing.JLabel field_dateofcreation;
     private javax.swing.JTextArea field_desc;
     private javax.swing.JLabel field_name;
     private javax.swing.JLabel field_owner;
     private javax.swing.JLabel field_projectid;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JList<String> list_issues;
+    private javax.swing.JList<String> list_members;
     private javax.swing.JList<String> list_tasks;
     // End of variables declaration//GEN-END:variables
 }

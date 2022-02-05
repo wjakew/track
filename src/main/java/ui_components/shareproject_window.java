@@ -9,8 +9,6 @@ import com.jakubwawak.track.connector.Connector;
 import com.jakubwawak.track.connector.Project_Connector;
 import com.jakubwawak.track.connector.Share_Connector;
 import com.mashape.unirest.http.exceptions.UnirestException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import maintenence.Parser;

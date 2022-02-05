@@ -159,6 +159,9 @@ public class Connector {
     public JsonElement check_user_login(String user_login,JDialog object) throws UnirestException{
         return this.commit("/user-check/"+oauth.app_token+"/"+oauth.session_token+"/"+user_login, object);
     }
+    public JsonElement check_user_login(String user_login,JFrame object) throws UnirestException{
+        return this.commit("/user-check/"+oauth.app_token+"/"+oauth.session_token+"/"+user_login, object);
+    }
     
     /**
      * Function for setting user email
@@ -253,6 +256,10 @@ public class Connector {
      * @return JsonElement
      */
     public JsonElement get_user(int user_id,JDialog object) throws UnirestException{
+        return commit("/user/"+oauth.app_token+"/"+user_id,object);
+    }
+    
+    public JsonElement get_user(int user_id,JFrame object) throws UnirestException{
         return commit("/user/"+oauth.app_token+"/"+user_id,object);
     }
     

@@ -33,7 +33,7 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="combobox_state" min="-2" pref="192" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="button_update" pref="183" max="32767" attributes="0"/>
+                      <Component id="button_update" max="32767" attributes="0"/>
                   </Group>
                   <Group type="102" attributes="0">
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
@@ -57,7 +57,7 @@
                                   <Component id="label_owner" min="-2" max="-2" attributes="0"/>
                               </Group>
                           </Group>
-                          <Component id="button_history" pref="224" max="32767" attributes="0"/>
+                          <Component id="button_history" max="32767" attributes="0"/>
                           <Component id="button_setdone" alignment="0" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace type="separate" max="-2" attributes="0"/>

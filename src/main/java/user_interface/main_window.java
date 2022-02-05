@@ -48,7 +48,7 @@ public class main_window extends javax.swing.JFrame {
         project_id = -1;
         this.setLocationRelativeTo(null);
         load_main_components();
-        this.setTitle("Track Client "+connector.version+" ("+connector.bulid+")");
+        this.setTitle("Track Client "+connector.version);
         setVisible(true);
     }
     /**
@@ -73,12 +73,14 @@ public class main_window extends javax.swing.JFrame {
      * Function for loading main components
      */
     void load_main_components() throws UnirestException{
+        button_projectsource.setText("My projects");
         menu_user_session.setText(connector.oauth.session_token);
         menu_user_session.setEnabled(false);
         menu_user_time.setText(connector.oauth.apr_login_time.toString());
         menu_user_time.setEnabled(false);
         menu_server_ip.setText("Connected to: "+connector.oauth.server_ip);
         menu_server_ip.setEnabled(false);
+        label_build.setText(connector.bulid);
         load_projects_list();
         load_tasks_list(0);
         load_issues_list(0);
@@ -102,11 +104,26 @@ public class main_window extends javax.swing.JFrame {
      * Function for loading project list
      */
     void load_projects_list() throws UnirestException{
-        Project_Connector pc = new Project_Connector(connector);
-        Parser p = new Parser(pc.load_projects_glances(this));
-        DefaultListModel dlm = new DefaultListModel();
-        dlm.addAll(p.get_arraylist("view"));
-        list_projects.setModel(dlm);
+        switch(button_projectsource.getText()){
+            case "My projects":
+            {
+                Project_Connector pc = new Project_Connector(connector);
+                Parser p = new Parser(pc.load_projects_glances(this));
+                DefaultListModel dlm = new DefaultListModel();
+                dlm.addAll(p.get_arraylist("view"));
+                list_projects.setModel(dlm);
+                break;
+            }
+            case "Member projects":
+            {
+                Project_Connector pc = new Project_Connector(connector);
+                Parser p = new Parser(pc.load_projects_glances_member(this));
+                DefaultListModel dlm = new DefaultListModel();
+                dlm.addAll(p.get_arraylist("view"));
+                list_projects.setModel(dlm);
+                break;
+            }
+        }
     }
     
     /**
@@ -167,7 +184,6 @@ public class main_window extends javax.swing.JFrame {
 
         jScrollPane1 = new javax.swing.JScrollPane();
         list_projects = new javax.swing.JList<>();
-        jLabel1 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         list_tasks = new javax.swing.JList<>();
         label_tasks = new javax.swing.JLabel();
@@ -182,6 +198,8 @@ public class main_window extends javax.swing.JFrame {
         button_boardview = new javax.swing.JButton();
         button_newboard = new javax.swing.JButton();
         button_snippets = new javax.swing.JButton();
+        button_projectsource = new javax.swing.JButton();
+        label_build = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         menu_actions = new javax.swing.JMenu();
         menu_reload_window = new javax.swing.JMenuItem();
@@ -214,6 +232,8 @@ public class main_window extends javax.swing.JFrame {
         menu_set_emailaddress = new javax.swing.JMenuItem();
         menu_user_configuration = new javax.swing.JMenuItem();
         menu_todo = new javax.swing.JMenu();
+        menu_todo_showlist = new javax.swing.JMenuItem();
+        menu_todo_quickadd = new javax.swing.JMenuItem();
         menu_information = new javax.swing.JMenu();
         menu_user_session = new javax.swing.JMenuItem();
         menu_user_time = new javax.swing.JMenuItem();
@@ -221,7 +241,7 @@ public class main_window extends javax.swing.JFrame {
         menu_reload_session = new javax.swing.JMenuItem();
         menu_debug = new javax.swing.JMenuItem();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Track Client");
 
         list_projects.setModel(new javax.swing.AbstractListModel<String>() {
@@ -235,8 +255,6 @@ public class main_window extends javax.swing.JFrame {
             }
         });
         jScrollPane1.setViewportView(list_projects);
-
-        jLabel1.setText("My Projects");
 
         list_tasks.setModel(new javax.swing.AbstractListModel<String>() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
@@ -299,6 +317,15 @@ public class main_window extends javax.swing.JFrame {
                 button_snippetsActionPerformed(evt);
             }
         });
+
+        button_projectsource.setText("My projects/Member projects");
+        button_projectsource.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                button_projectsourceActionPerformed(evt);
+            }
+        });
+
+        label_build.setText("build");
 
         menu_actions.setText("Track");
 
@@ -519,6 +546,23 @@ public class main_window extends javax.swing.JFrame {
                 menu_todoMouseClicked(evt);
             }
         });
+
+        menu_todo_showlist.setText("Show list");
+        menu_todo_showlist.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menu_todo_showlistActionPerformed(evt);
+            }
+        });
+        menu_todo.add(menu_todo_showlist);
+
+        menu_todo_quickadd.setText("Quick add");
+        menu_todo_quickadd.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menu_todo_quickaddActionPerformed(evt);
+            }
+        });
+        menu_todo.add(menu_todo_quickadd);
+
         jMenuBar1.add(menu_todo);
 
         menu_information.setText("Information");
@@ -558,69 +602,59 @@ public class main_window extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 305, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(label_tasks)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 311, Short.MAX_VALUE))
+                        .addComponent(label_build, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
+                        .addComponent(label_tasks)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 288, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(label_issues)
+                        .addGap(59, 59, 59)
+                        .addComponent(button_loadall)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 288, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(label_issues)
+                        .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(button_loadall)))
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addGroup(layout.createSequentialGroup()
-                            .addGap(4, 4, 4)
-                            .addComponent(jLabel2)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(button_newboard, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(layout.createSequentialGroup()
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 244, Short.MAX_VALUE)
-                                .addComponent(button_projectdetails, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jScrollPane4)))
-                        .addGroup(layout.createSequentialGroup()
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(jLabel1)
-                            .addGap(18, 18, 18)
-                            .addComponent(button_snippets, javax.swing.GroupLayout.DEFAULT_SIZE, 153, Short.MAX_VALUE)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(button_boardview, javax.swing.GroupLayout.PREFERRED_SIZE, 244, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(button_newboard, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 244, Short.MAX_VALUE)
+                    .addComponent(button_projectdetails, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane4)
+                    .addComponent(button_boardview, javax.swing.GroupLayout.DEFAULT_SIZE, 244, Short.MAX_VALUE)
+                    .addComponent(button_snippets, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(button_projectsource, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(3, 3, 3)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel1)
-                            .addComponent(button_loadall)
-                            .addComponent(label_issues)
-                            .addComponent(button_snippets)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(label_tasks)))
+                .addGap(3, 3, 3)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(button_loadall)
+                    .addComponent(label_issues)
+                    .addComponent(button_projectsource)
+                    .addComponent(label_tasks)
+                    .addComponent(label_build))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGap(12, 12, 12)
                         .addComponent(button_projectdetails)
-                        .addGap(18, 18, 18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(button_snippets)
+                        .addGap(12, 12, 12)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel2)
                             .addComponent(button_newboard))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(button_boardview, javax.swing.GroupLayout.DEFAULT_SIZE, 99, Short.MAX_VALUE))
+                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(button_boardview, javax.swing.GroupLayout.DEFAULT_SIZE, 96, Short.MAX_VALUE))
                     .addComponent(jScrollPane2)
                     .addComponent(jScrollPane3))
                 .addContainerGap())
@@ -952,12 +986,39 @@ public class main_window extends javax.swing.JFrame {
     }//GEN-LAST:event_button_snippetsActionPerformed
 
     private void menu_todoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_menu_todoMouseClicked
+
+    }//GEN-LAST:event_menu_todoMouseClicked
+
+    private void button_projectsourceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_projectsourceActionPerformed
+        if ( button_projectsource.getText().equals("My projects") ){
+            button_projectsource.setText("Member projects");
+            try {
+                load_projects_list();
+            } catch (UnirestException ex) {
+                new message_window(this,true,"Error\n"+ex.toString(),"ERROR");
+            }
+        }
+        else{
+            button_projectsource.setText("My projects");
+            try {
+                load_projects_list();
+            } catch (UnirestException ex) {
+                new message_window(this,true,"Error\n"+ex.toString(),"ERROR");
+            }
+        }
+    }//GEN-LAST:event_button_projectsourceActionPerformed
+
+    private void menu_todo_showlistActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menu_todo_showlistActionPerformed
         try {
             new todo_window(connector,connector.oauth.user_id);
         } catch (UnirestException ex) {
             new message_window(this,true,"Error\n"+ex.toString(),"ERROR");
         }
-    }//GEN-LAST:event_menu_todoMouseClicked
+    }//GEN-LAST:event_menu_todo_showlistActionPerformed
+
+    private void menu_todo_quickaddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menu_todo_quickaddActionPerformed
+        new todoadd_window(this,true,connector);
+    }//GEN-LAST:event_menu_todo_quickaddActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -965,14 +1026,15 @@ public class main_window extends javax.swing.JFrame {
     private javax.swing.JButton button_loadall;
     private javax.swing.JButton button_newboard;
     private javax.swing.JButton button_projectdetails;
+    private javax.swing.JButton button_projectsource;
     private javax.swing.JButton button_snippets;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JLabel label_build;
     private javax.swing.JLabel label_issues;
     private javax.swing.JLabel label_tasks;
     private javax.swing.JList<String> list_boards;
@@ -1013,6 +1075,8 @@ public class main_window extends javax.swing.JFrame {
     private javax.swing.JMenu menu_task;
     private javax.swing.JMenuItem menu_taskdetails;
     private javax.swing.JMenu menu_todo;
+    private javax.swing.JMenuItem menu_todo_quickadd;
+    private javax.swing.JMenuItem menu_todo_showlist;
     private javax.swing.JMenuItem menu_user_configuration;
     private javax.swing.JMenuItem menu_user_session;
     private javax.swing.JMenuItem menu_user_time;
