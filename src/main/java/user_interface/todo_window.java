@@ -11,6 +11,7 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import java.util.ArrayList;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
+import javax.swing.JFrame;
 import javax.swing.table.DefaultTableModel;
 import maintenence.Parser;
 import ui_components.todostate_window;
@@ -26,10 +27,10 @@ public class todo_window extends javax.swing.JFrame {
      */
     Connector connector;
     int user_id;
-    public todo_window(Connector connector,int user_id) throws UnirestException {
+    public todo_window(Connector connector,int user_id,JFrame object) throws UnirestException {
         this.connector = connector;
         this.user_id = user_id;
-        this.setLocationRelativeTo(null);
+        this.setLocationRelativeTo(object);
         initComponents();
         load_window();
         setVisible(true);

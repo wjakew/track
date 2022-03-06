@@ -12,6 +12,8 @@ import com.jakubwawak.track.connector.Issue_Connector;
 import com.jakubwawak.track.connector.Project_Connector;
 import com.jakubwawak.track.connector.Task_Connector;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.ListModel;
@@ -20,10 +22,12 @@ import ui_components.archive_window;
 import ui_components.boardview_window;
 import ui_components.changepassword_window;
 import ui_components.configuration_window;
+import ui_components.createroom_window;
 import ui_components.debug_window;
 import ui_components.issuedetails_window;
 import ui_components.newboard_window;
 import ui_components.projectdetails_window;
+import ui_components.roommanager_window;
 import ui_components.setemail_window;
 import ui_components.sharedprojects_window;
 import ui_components.sharedtouser_window;
@@ -182,6 +186,7 @@ public class main_window extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jMenu1 = new javax.swing.JMenu();
         jScrollPane1 = new javax.swing.JScrollPane();
         list_projects = new javax.swing.JList<>();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -234,12 +239,17 @@ public class main_window extends javax.swing.JFrame {
         menu_todo = new javax.swing.JMenu();
         menu_todo_showlist = new javax.swing.JMenuItem();
         menu_todo_quickadd = new javax.swing.JMenuItem();
+        menu_rooms = new javax.swing.JMenu();
+        menu_roommanager = new javax.swing.JMenuItem();
+        menu_messages = new javax.swing.JMenuItem();
         menu_information = new javax.swing.JMenu();
         menu_user_session = new javax.swing.JMenuItem();
         menu_user_time = new javax.swing.JMenuItem();
         menu_server_ip = new javax.swing.JMenuItem();
         menu_reload_session = new javax.swing.JMenuItem();
         menu_debug = new javax.swing.JMenuItem();
+
+        jMenu1.setText("jMenu1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Track Client");
@@ -565,6 +575,26 @@ public class main_window extends javax.swing.JFrame {
 
         jMenuBar1.add(menu_todo);
 
+        menu_rooms.setText("Rooms");
+
+        menu_roommanager.setText("Room manager");
+        menu_roommanager.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menu_roommanagerActionPerformed(evt);
+            }
+        });
+        menu_rooms.add(menu_roommanager);
+
+        menu_messages.setText("Messages");
+        menu_messages.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menu_messagesActionPerformed(evt);
+            }
+        });
+        menu_rooms.add(menu_messages);
+
+        jMenuBar1.add(menu_rooms);
+
         menu_information.setText("Information");
 
         menu_user_session.setText("user_session");
@@ -671,6 +701,11 @@ public class main_window extends javax.swing.JFrame {
 
     private void menu_reload_sessionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menu_reload_sessionActionPerformed
         new login_window(this,true,connector,1);
+        try {
+            load_main_components();
+        } catch (UnirestException ex) {
+            new message_window(this,true,"Error \n"+ex.toString(),"ERROR");
+        }
         try {
             load_main_components();
         } catch (UnirestException ex) {
@@ -1010,7 +1045,7 @@ public class main_window extends javax.swing.JFrame {
 
     private void menu_todo_showlistActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menu_todo_showlistActionPerformed
         try {
-            new todo_window(connector,connector.oauth.user_id);
+            new todo_window(connector,connector.oauth.user_id,this);
         } catch (UnirestException ex) {
             new message_window(this,true,"Error\n"+ex.toString(),"ERROR");
         }
@@ -1019,6 +1054,18 @@ public class main_window extends javax.swing.JFrame {
     private void menu_todo_quickaddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menu_todo_quickaddActionPerformed
         new todoadd_window(this,true,connector);
     }//GEN-LAST:event_menu_todo_quickaddActionPerformed
+
+    private void menu_roommanagerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menu_roommanagerActionPerformed
+        try {
+            new roommanager_window(connector);
+        } catch (UnirestException ex) {
+            new message_window(this,true,"Error\n"+ex.toString(),"ERROR");
+        }
+    }//GEN-LAST:event_menu_roommanagerActionPerformed
+
+    private void menu_messagesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menu_messagesActionPerformed
+        new messages_window(connector);
+    }//GEN-LAST:event_menu_messagesActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -1029,6 +1076,7 @@ public class main_window extends javax.swing.JFrame {
     private javax.swing.JButton button_projectsource;
     private javax.swing.JButton button_snippets;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
@@ -1055,6 +1103,7 @@ public class main_window extends javax.swing.JFrame {
     private javax.swing.JMenu menu_issue;
     private javax.swing.JMenuItem menu_issueaddtoboard;
     private javax.swing.JMenuItem menu_log_out;
+    private javax.swing.JMenuItem menu_messages;
     private javax.swing.JMenu menu_myprofile;
     private javax.swing.JMenuItem menu_new_project;
     private javax.swing.JMenuItem menu_newissue;
@@ -1065,6 +1114,8 @@ public class main_window extends javax.swing.JFrame {
     private javax.swing.JMenuItem menu_removeboard;
     private javax.swing.JMenuItem menu_removeissue;
     private javax.swing.JMenuItem menu_removetask;
+    private javax.swing.JMenuItem menu_roommanager;
+    private javax.swing.JMenu menu_rooms;
     private javax.swing.JMenuItem menu_server_ip;
     private javax.swing.JMenuItem menu_set_emailaddress;
     private javax.swing.JMenu menu_shared;

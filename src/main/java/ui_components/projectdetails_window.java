@@ -318,7 +318,7 @@ public class projectdetails_window extends javax.swing.JFrame {
 
     private void button_addmemberActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_addmemberActionPerformed
         try {
-            new addmember_window(this,true,connector,project_id);
+            new addmember_window(this,true,connector,project_id,1);
             load_members();
         } catch (Exception ex) {
             new message_window(this,true,"Error\n"+ex.toString(),"ERROR");

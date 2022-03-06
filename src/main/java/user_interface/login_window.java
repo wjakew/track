@@ -30,6 +30,7 @@ public class login_window extends javax.swing.JDialog {
      * mode = 1 - session extension
      */
     int mode;
+    
     public login_window(java.awt.Frame parent, boolean modal,Connector connector,int mode){
         super(parent, modal);
         this.connector = connector;
@@ -241,7 +242,6 @@ public class login_window extends javax.swing.JDialog {
                             dispose();
                         }
                         else{
-                            new message_window(this,true,"Session validated","");
                             dispose();
                         }
                     }
@@ -281,17 +281,21 @@ public class login_window extends javax.swing.JDialog {
                             new message_window(this,true,"No user with that login or password found","NOUSER_ERROR");
                         }
                         else{
-                            new message_window(this,true,"Welcome back "+parser.get_string("user_name")+"!","welcome!");
                             //login successfull
-                            if (mode == 0)
+                            if (mode == 0){
+                                new message_window(this,true,"Welcome back "+parser.get_string("user_name")+"!","welcome!");
                                 // loading user_configuration
                                 connector.get_user_configuration(this);
                                 new main_window(connector);
-                            dispose();
+                                dispose();
+                            }
+                            else{
+                                dispose();
+                            }
                         }
                     }
                     else{
-                        new message_window(this,true,"Failed to connect to server","ERROR");
+                        dispose();
                     }
                 } catch (UnirestException ex) {
                     new message_window(this,true,"ERROR\n"+ex.toString(),"ERROR");
