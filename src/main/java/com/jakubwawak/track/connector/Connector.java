@@ -80,20 +80,33 @@ public class Connector {
             }
             if ( parser.get_int("flag") < 0){
                 switch(parser.get_int("flag")){
+                    case -1:
+                        new message_window(object,true,"Error on database.\nCheck API log","DATABASE-ERROR");
+                        System.exit(1);
+                        break;
                     case -11:
                         new message_window(object,true,"Provided app token is wrong","APPTOKEN-ERROR");
+                        System.exit(1);
                         break;
                     case -99:
                         new message_window(object,true,"Your login session has expired","SESSION-EXPIRED");
+                        new login_window(object,true,this,1);
                         break;
                     case -88:
                         new message_window(object,true,"Database error when checking session token","");
+                        System.exit(1);
+                        break;
+                    default:
+                        new message_window(object,true,"Unexpected error while commiting on API.\n Got flag ("+parser.get_int("flag")+"\n"
+                            + "Check API log or contact system administrator.","API FAILED");
+                        System.exit(1);
                         break;
                 }
-                new login_window(object,true,this,1);
             }
         }catch(Exception e){
             System.out.println("CONNECTOR ERROR: "+e.toString());
+            new message_window("Response error, API error.\nCheck API log\nERROR:"+e.toString(),"ERROR");
+            System.exit(0);
         }
         return parse_response(response);
     }
@@ -113,24 +126,35 @@ public class Connector {
                 new message_window(object,true,"Connection error...","");
                 System.exit(0);
             }
-            
             if ( parser.get_int("flag") < 0){
                 switch(parser.get_int("flag")){
+                    case -1:
+                        new message_window(object,true,"Error on database.\nCheck API log","DATABASE-ERROR");
+                        System.exit(1);
+                        break;
                     case -11:
                         new message_window(object,true,"Provided app token is wrong","APPTOKEN-ERROR");
+                        System.exit(1);
                         break;
                     case -99:
                         new message_window(object,true,"Your login session has expired","SESSION-EXPIRED");
+                        new login_window(object,true,this,1);
                         break;
                     case -88:
                         new message_window(object,true,"Database error when checking session token","");
+                        System.exit(1);
+                        break;
+                    default:
+                        new message_window(object,true,"Unexpected error while commiting on API.\n Got flag ("+parser.get_int("flag")+"\n"
+                            + "Check API log or contact system administrator.","API FAILED");
+                        System.exit(1);
                         break;
                 }
-                new login_window(object,true,this,1);
             }
-            
         }catch(Exception e){
             System.out.println("CONNECTOR ERROR: "+e.toString());
+            new message_window("Response error, API error.\nCheck API log\nERROR:"+e.toString(),"ERROR");
+            System.exit(0);
         }
         return parse_response(response);
     }
@@ -229,8 +253,8 @@ public class Connector {
         try{
             logger.log("Trying to login "+user_login,0);
             Password_Validator pv = new Password_Validator(password);
-            HttpResponse <JsonNode> response = response_creator("/login/"+oauth.app_token+"/"+user_login+"/"+pv.hash());
-            logger.log("Creating login attempt: "+"/login/"+oauth.app_token+"/"+user_login+"/"+pv.hash(),0);
+            HttpResponse <JsonNode> response = response_creator("/n-login/"+oauth.app_token+"/"+user_login+"/"+pv.hash());
+            logger.log("Creating login attempt: "+"/n-login/"+oauth.app_token+"/"+user_login+"/"+pv.hash(),0);
             if ( response != null){
                 Parser parser = new Parser(parse_response(response));
                 if ( parser.get_int("user_id") > 0 ){
@@ -246,6 +270,36 @@ public class Connector {
             }
         }catch(UnirestException e){
             logger.log("Failed to login ("+e.toString()+")",1);
+            return null;
+        }
+    }
+    
+    /**
+     * Function for logging user
+     * @param fa_code
+     * @return JsonElement
+     * 2fa-auth/{app_token}/{user_id}/{fa_token}
+     */
+    public JsonElement user_2fa_auth(int fa_code){
+        try{
+            logger.log("Trying to authenticate using 2fa code",0);
+            HttpResponse <JsonNode> response = response_creator("/2fa-auth/"+oauth.app_token+"/"+oauth.user_id+"/"+fa_code);
+            logger.log("Creating authentication attempt: "+"/2fa-auth/"+oauth.app_token+"/"+oauth.user_id+"/"+fa_code,0);
+            if ( response != null){
+                Parser parser = new Parser(parse_response(response));
+                if ( parser.get_int("user_id") > 0 ){
+                    oauth.user_id = parser.get_int("user_id");
+                    oauth.session_token = parser.get_string("user_session");
+                    logger.log("Obtained session token:"+oauth.session_token,0);
+                    oauth.apr_login_time = new Date();
+                }
+                return parse_response(response);
+            }
+            else{
+                return null;
+            }
+        }catch(Exception e){
+            logger.log("Failed to authenticate user ("+e.toString()+")",1);
             return null;
         }
     }

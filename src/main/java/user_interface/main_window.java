@@ -209,6 +209,7 @@ public class main_window extends javax.swing.JFrame {
         menu_actions = new javax.swing.JMenu();
         menu_reload_window = new javax.swing.JMenuItem();
         menu_log_out = new javax.swing.JMenuItem();
+        menu_about = new javax.swing.JMenuItem();
         menu_project = new javax.swing.JMenu();
         menu_new_project = new javax.swing.JMenuItem();
         menu_remove_project = new javax.swing.JMenuItem();
@@ -354,6 +355,14 @@ public class main_window extends javax.swing.JFrame {
             }
         });
         menu_actions.add(menu_log_out);
+
+        menu_about.setText("About");
+        menu_about.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menu_aboutActionPerformed(evt);
+            }
+        });
+        menu_actions.add(menu_about);
 
         jMenuBar1.add(menu_actions);
 
@@ -1067,6 +1076,10 @@ public class main_window extends javax.swing.JFrame {
         new messages_window(connector);
     }//GEN-LAST:event_menu_messagesActionPerformed
 
+    private void menu_aboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menu_aboutActionPerformed
+        new about_window(this,true);
+    }//GEN-LAST:event_menu_aboutActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton button_boardview;
@@ -1089,6 +1102,7 @@ public class main_window extends javax.swing.JFrame {
     private javax.swing.JList<String> list_issues;
     private javax.swing.JList<String> list_projects;
     private javax.swing.JList<String> list_tasks;
+    private javax.swing.JMenuItem menu_about;
     private javax.swing.JMenu menu_actions;
     private javax.swing.JMenuItem menu_addtoboard;
     private javax.swing.JMenu menu_archive;

@@ -14,6 +14,7 @@ import java.awt.event.KeyEvent;
 import java.security.NoSuchAlgorithmException;
 import javax.swing.ImageIcon;
 import maintenence.Parser;
+import ui_components.twofactorauth_window;
 
 /**
  *Window for loggin user
@@ -104,7 +105,64 @@ public class login_window extends javax.swing.JDialog {
     boolean validate_fields(){
         return !field_login.getText().equals("") && !field_password.getText().equals("");
     }
-
+    
+    /**
+     * Function for login
+     */
+    void login(){
+        if ( validate_fields() ){
+            try {
+                JsonElement response = connector.user_login(field_login.getText(),field_password.getText());
+                if (response != null){
+                    Parser parser = new Parser(response);
+                    if ( parser.get_flag() == 1){
+                        // user without 2fa auth
+                        if(parser.get_int("user_id") == -11){
+                            new message_window(this,true,"App token not found.","APPTOKEN_ERROR");
+                        }
+                        else if (parser.get_int("user_id") == -5){
+                            new message_window(this,true,"Wrong password or login. Authorization failed.","AUTH_ERROR");
+                        }
+                        else if (parser.get_int("user_id") == -6){
+                            new message_window(this,true,"Database error","DATABASE_ERROR");
+                        }
+                        else{
+                            //login successfull
+                            if (mode == 0){
+                                new message_window(this,true,"Welcome back "+parser.get_string("user_name")+"!","welcome!");
+                                // loading user_configuration
+                                connector.get_user_configuration(this);
+                                new main_window(connector);
+                                dispose();
+                            }
+                            else{
+                                dispose();
+                            }
+                        }
+                    }
+                    else if (parser.get_int("flag") == -69){
+                        //2fa authorization
+                        new twofactorauth_window(this,true,connector);
+                        dispose();
+                    }
+                    else{
+                        new message_window(this,true,"API returned unknown code ("+parser.get_int("flag")+"). Check API log","ERROR");
+                    }
+                }
+                else{
+                    new message_window(this,true,"API connection faled.\nResponse is null.","ERROR");
+                    System.exit(0);
+                }
+            } catch (UnirestException ex) {
+                new message_window(this,true,"ERROR\n"+ex.toString(),"ERROR");
+            } catch (NoSuchAlgorithmException ex) {
+                new message_window(this,true,"ERROR\n"+ex.toString(),"ERROR");
+            }
+        }
+        else{
+            new message_window(this,true,"Wrong login or password","ERROR");
+        }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -218,45 +276,8 @@ public class login_window extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void button_loginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_loginActionPerformed
-        if ( validate_fields() ){
-            try {
-                JsonElement response = connector.user_login(field_login.getText(),field_password.getText());
-                if (response != null){
-                    Parser parser = new Parser(response);
-                    if(parser.get_int("user_id") == -11){
-                        new message_window(this,true,"App token not found.","APPTOKEN_ERROR");
-                    }
-                    else if (parser.get_int("user_id") == -5){
-                        new message_window(this,true,"Wrong password or login. Authorization failed.","AUTH_ERROR");
-                    }
-                    else if (parser.get_int("user_id") == -6){
-                        new message_window(this,true,"Database error","DATABASE_ERROR");
-                    }
-                    else{
-                        //login successfull
-                        if (mode == 0){
-                            new message_window(this,true,"Welcome back "+parser.get_string("user_name")+"!","welcome!");
-                            // loading user_configuration
-                            connector.get_user_configuration(this);
-                            new main_window(connector);
-                            dispose();
-                        }
-                        else{
-                            dispose();
-                        }
-                    }
-                }
-                else{  
-                }
-            } catch (UnirestException ex) {
-                new message_window(this,true,"ERROR\n"+ex.toString(),"ERROR");
-            } catch (NoSuchAlgorithmException ex) {
-                new message_window(this,true,"ERROR\n"+ex.toString(),"ERROR");
-            }
-        }
-        else{
-            new message_window(this,true,"Wrong login or password","ERROR");
-        }
+       login(); 
+       
     }//GEN-LAST:event_button_loginActionPerformed
 
     private void button_registerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_registerActionPerformed
@@ -265,47 +286,7 @@ public class login_window extends javax.swing.JDialog {
 
     private void field_passwordKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_field_passwordKeyPressed
         if (evt.getKeyCode() == KeyEvent.VK_ENTER){
-            if ( validate_fields() ){
-                try {
-                    JsonElement response = connector.user_login(field_login.getText(),field_password.getText());
-                    if (response != null){
-                        Parser parser = new Parser(response);
-                        if(parser.get_int("user_id") == -6){
-                            new message_window(this,true,"App token not found.","APPTOKEN_ERROR");
-                        }
-                        else if (parser.get_int("user_id") == -5){
-                            new message_window(this,true,"Wrong password or login. Authorization failed.","AUTH_ERROR");
-                            field_password.setText("");
-                        }
-                        else if (parser.get_int("user_id") == -1){
-                            new message_window(this,true,"No user with that login or password found","NOUSER_ERROR");
-                        }
-                        else{
-                            //login successfull
-                            if (mode == 0){
-                                new message_window(this,true,"Welcome back "+parser.get_string("user_name")+"!","welcome!");
-                                // loading user_configuration
-                                connector.get_user_configuration(this);
-                                new main_window(connector);
-                                dispose();
-                            }
-                            else{
-                                dispose();
-                            }
-                        }
-                    }
-                    else{
-                        dispose();
-                    }
-                } catch (UnirestException ex) {
-                    new message_window(this,true,"ERROR\n"+ex.toString(),"ERROR");
-                } catch (NoSuchAlgorithmException ex) {
-                    new message_window(this,true,"ERROR\n"+ex.toString(),"ERROR");
-                }
-            }
-            else{
-                new message_window(this,true,"Wrong login or password","ERROR");
-            }
+            login();
         }
     }//GEN-LAST:event_field_passwordKeyPressed
 

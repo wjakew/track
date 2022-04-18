@@ -5,6 +5,8 @@ all rights reseved
  */
 package user_interface;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import javax.swing.ImageIcon;
 
 /**
@@ -25,6 +27,7 @@ public class message_window extends javax.swing.JDialog {
         field_message.setText(message);
         field_message.setEditable(false);
         field_message.requestFocus();
+        prepare_message(optional_title);
         this.setLocationRelativeTo(null);
         load_window_icon();
         setVisible(true);
@@ -39,6 +42,7 @@ public class message_window extends javax.swing.JDialog {
         field_message.setText(message);
         field_message.setEditable(false);
         field_message.requestFocus();
+        prepare_message(optional_title);
         this.setLocationRelativeTo(null);
         load_window_icon();
         setVisible(true);
@@ -54,6 +58,7 @@ public class message_window extends javax.swing.JDialog {
         field_message.setText(message);
         field_message.setEditable(false);
         field_message.requestFocus();
+        prepare_message(optional_title);
         this.setLocationRelativeTo(null);
         load_window_icon();
         setVisible(true);
@@ -67,9 +72,22 @@ public class message_window extends javax.swing.JDialog {
         field_message.setText(message);
         field_message.setEditable(false);
         field_message.requestFocus();
+        prepare_message(optional_title);
         this.setLocationRelativeTo(null);
         load_window_icon();
         setVisible(true);
+    }
+    
+    /**
+     * Function for preparing messages
+     */
+    void prepare_message(String optional_title){
+        LocalDateTime ldt = LocalDateTime.now(ZoneId.of("Europe/Warsaw"));
+        if ( optional_title.contains("ERROR") || optional_title.contains("FAILED") ){
+            String message = field_message.getText();
+            message = message + "\nTIME OF ERROR: "+ldt.toString()+"\nScreenshot that screen and send that to system administrator.";
+            field_message.setText(message);
+        }
     }
     
     /**
