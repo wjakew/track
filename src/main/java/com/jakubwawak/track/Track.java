@@ -24,8 +24,8 @@ import user_interface.message_window;
  */
 public class Track {
     
-    final static String version = "1.2.5";
-    final static String build = "TRA180422REV1CK";
+    final static String version = "1.2.6";
+    final static String build = "TRA180422REV2CK";
     
     static OAuth oauth;
     static TrackLogger logger;

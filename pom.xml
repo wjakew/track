@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.jakubwawak</groupId>
     <artifactId>track</artifactId>
-    <version>1.2.5</version>
+    <version>1.2.6</version>
     <packaging>jar</packaging>
     <build>
         <plugins>
@@ -43,7 +43,7 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webflux</artifactId>
-            <version>5.3.3</version>
+            <version>5.3.18</version>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
