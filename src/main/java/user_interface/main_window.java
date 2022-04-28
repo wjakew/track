@@ -12,6 +12,7 @@ import com.jakubwawak.track.connector.Issue_Connector;
 import com.jakubwawak.track.connector.Project_Connector;
 import com.jakubwawak.track.connector.Task_Connector;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
@@ -114,7 +115,7 @@ public class main_window extends javax.swing.JFrame {
                 Project_Connector pc = new Project_Connector(connector);
                 Parser p = new Parser(pc.load_projects_glances(this));
                 DefaultListModel dlm = new DefaultListModel();
-                dlm.addAll(p.get_arraylist("view"));
+                addAll(dlm,p.get_arraylist("view"));
                 list_projects.setModel(dlm);
                 break;
             }
@@ -123,10 +124,20 @@ public class main_window extends javax.swing.JFrame {
                 Project_Connector pc = new Project_Connector(connector);
                 Parser p = new Parser(pc.load_projects_glances_member(this));
                 DefaultListModel dlm = new DefaultListModel();
-                dlm.addAll(p.get_arraylist("view"));
+                addAll(dlm,p.get_arraylist("view"));
                 list_projects.setModel(dlm);
                 break;
             }
+        }
+    }
+    /**
+     * Function for adding all data to the view
+     * @param dlm
+     * @param data 
+     */
+    void addAll(DefaultListModel dlm, ArrayList<String> data){
+        for (String element : data){
+            dlm.addElement(element);
         }
     }
     
@@ -144,7 +155,7 @@ public class main_window extends javax.swing.JFrame {
         Task_Connector tc = new Task_Connector(connector);
         Parser p = new Parser(tc.load_task_glances(mode, this));
         DefaultListModel dlm = new DefaultListModel();
-        dlm.addAll(p.get_arraylist("view"));
+        addAll(dlm,p.get_arraylist("view"));
         list_tasks.setModel(dlm);
     }
     /**
@@ -161,7 +172,7 @@ public class main_window extends javax.swing.JFrame {
         Issue_Connector ic = new Issue_Connector(connector);
         Parser p = new Parser(ic.load_issues_glances(mode, this));
         DefaultListModel dlm = new DefaultListModel();
-        dlm.addAll(p.get_arraylist("view"));
+        addAll(dlm,p.get_arraylist("view"));
         list_issues.setModel(dlm);
     }
     
@@ -173,7 +184,7 @@ public class main_window extends javax.swing.JFrame {
         Board_Connector bc = new Board_Connector(connector);
         Parser parser = new Parser(bc.get_board_glances(this));
         DefaultListModel dlm = new DefaultListModel();
-        dlm.addAll(parser.get_arraylist("view"));
+        addAll(dlm,parser.get_arraylist("view"));
         list_boards.setModel(dlm);
     }
 

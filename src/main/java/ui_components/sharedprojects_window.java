@@ -8,6 +8,7 @@ package ui_components;
 import com.jakubwawak.track.connector.Connector;
 import com.jakubwawak.track.connector.Share_Connector;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import java.util.ArrayList;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import maintenence.Parser;
@@ -52,8 +53,19 @@ public class sharedprojects_window extends javax.swing.JDialog {
         DefaultListModel dlm = new DefaultListModel();
         Share_Connector sh = new Share_Connector(connector);
         Parser parser = new Parser(sh.show_myshared_projects(this));
-        dlm.addAll(parser.get_arraylist("view"));
+        addAll(dlm,parser.get_arraylist("view"));
         list_shares.setModel(dlm);
+    }
+    
+    /**
+     * Function for adding all data to the view
+     * @param dlm
+     * @param data 
+     */
+    void addAll(DefaultListModel dlm, ArrayList<String> data){
+        for (String element : data){
+            dlm.addElement(element);
+        }
     }
 
     /**

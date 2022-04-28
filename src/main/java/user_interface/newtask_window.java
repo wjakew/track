@@ -10,7 +10,9 @@ import com.jakubwawak.track.connector.Connector;
 import com.jakubwawak.track.connector.Project_Connector;
 import com.jakubwawak.track.connector.Task_Connector;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import java.util.ArrayList;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import maintenence.Parser;
 
@@ -55,11 +57,20 @@ public class newtask_window extends javax.swing.JDialog {
         Parser parser = new Parser(pc.load_projects_glances(this));
         dcm.addAll(parser.get_arraylist("view"));
         parser = new Parser (pc.load_projects_glances_member(this));
-        dcm.addAll(parser.get_arraylist("view"));
+        addAll(dcm,parser.get_arraylist("view"));
         combobox_project.setModel(dcm);
         combobox_project.setSelectedIndex(0);
     }
-    
+    /**
+     * Function for adding all data to the view
+     * @param dlm
+     * @param data 
+     */
+    void addAll(DefaultComboBoxModel dlm, ArrayList<String> data){
+        for (String element : data){
+            dlm.addElement(element);
+        }
+    }
     /**
      * Function for field validation
      * @return boolean

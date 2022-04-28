@@ -58,12 +58,24 @@ public class todo_window extends javax.swing.JFrame {
             for(String line : todo_glances){
                 System.out.println(line);
             }
-            dtm.addAll(todo_glances);
+            addAll(dtm,todo_glances);
             table_todo.setModel(dtm);
         }catch(Exception e){
             new message_window(this,true,"Error\nFailed to load todo list\nCheck API log","ERROR");
         }
     }
+    
+    /**
+     * Function for adding all data to the view
+     * @param dlm
+     * @param data 
+     */
+    void addAll(DefaultListModel dlm, ArrayList<String> data){
+        for (String element : data){
+            dlm.addElement(element);
+        }
+    }
+    
     
     /**
      * Function for loading window icon

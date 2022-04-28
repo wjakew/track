@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import maintenence.Parser;
 
@@ -68,7 +69,7 @@ public class newissue_window extends javax.swing.JDialog {
         Project_Connector pc = new Project_Connector(connector);
         Parser parser = new Parser(pc.load_projects_glances(this));
         ArrayList<String> data = parser.get_arraylist("view");
-        dcm.addAll(parser.get_arraylist("view"));
+        addAll(dcm,parser.get_arraylist("view"));
         combobox_projects.setModel(dcm);
         combobox_projects.setSelectedIndex(0);
         int index = -1;
@@ -88,6 +89,17 @@ public class newissue_window extends javax.swing.JDialog {
             combobox_projects.setEnabled(false);
         }
     }
+    /**
+     * Function for adding all data to the view
+     * @param dlm
+     * @param data 
+     */
+    void addAll(DefaultComboBoxModel dlm, ArrayList<String> data){
+        for (String element : data){
+            dlm.addElement(element);
+        }
+    }
+    
     
     /**
      * Function for validating fields

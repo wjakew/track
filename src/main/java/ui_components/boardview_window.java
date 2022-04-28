@@ -11,6 +11,7 @@ import com.jakubwawak.track.connector.Issue_Connector;
 import com.jakubwawak.track.connector.Task_Connector;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import java.awt.Frame;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
@@ -65,9 +66,20 @@ public class boardview_window extends javax.swing.JFrame {
         DefaultListModel dlm = new DefaultListModel();
         Board_Connector bc = new Board_Connector(connector);
         Parser parser = new Parser(bc.board_element_list(board_id, this));
-        dlm.addAll(parser.get_arraylist("view"));
+        addAll(dlm,parser.get_arraylist("view"));
         list_elements.setModel(dlm);
         this.setAlwaysOnTop(true);
+    }
+    
+    /**
+     * Function for adding all data to the view
+     * @param dlm
+     * @param data 
+     */
+    void addAll(DefaultListModel dlm, ArrayList<String> data){
+        for (String element : data){
+            dlm.addElement(element);
+        }
     }
 
     /**

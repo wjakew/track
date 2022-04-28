@@ -11,6 +11,7 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
@@ -79,8 +80,19 @@ public class taskdetails_window extends javax.swing.JDialog {
         
         Parser parser_comments = new Parser(tc.load_task_comments(task_id, this));
         DefaultListModel dlm = new DefaultListModel();
-        dlm.addAll(parser_comments.get_arraylist("view"));
+        addAll(dlm,parser_comments.get_arraylist("view"));
         list_comments.setModel(dlm);
+    }
+    
+    /**
+     * Function for adding all data to the view
+     * @param dlm
+     * @param data 
+     */
+    void addAll(DefaultListModel dlm, ArrayList<String> data){
+        for (String element : data){
+            dlm.addElement(element);
+        }
     }
 
     /**

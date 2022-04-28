@@ -89,7 +89,7 @@ public class newboard_window extends javax.swing.JDialog {
                 }catch(Exception e){}
             }
         }
-        dlm.addAll(all_elements);
+        addAll(dlm,all_elements);
         list_board_all.setModel(dlm);
         
         list_boardelements.setEnabled(false);
@@ -100,6 +100,17 @@ public class newboard_window extends javax.swing.JDialog {
         
         DefaultListModel empty = new DefaultListModel();
         list_boardelements.setModel(empty);
+    }
+    
+    /**
+     * Function for adding all data to the view
+     * @param dlm
+     * @param data 
+     */
+    void addAll(DefaultListModel dlm, ArrayList<String> data){
+        for (String element : data){
+            dlm.addElement(element);
+        }
     }
     
     /**

@@ -10,6 +10,7 @@ import com.jakubwawak.track.connector.Issue_Connector;
 import com.jakubwawak.track.connector.Share_Connector;
 import com.jakubwawak.track.connector.Task_Connector;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import java.util.ArrayList;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import maintenence.Parser;
@@ -55,7 +56,7 @@ public class sharedtouser_window extends javax.swing.JDialog {
         DefaultListModel dlm = new DefaultListModel();
         Share_Connector sh = new Share_Connector(connector);
         Parser parser = new Parser(sh.show_sharedtome_projects(this));
-        dlm.addAll(parser.get_arraylist("view"));
+        addAll(dlm,parser.get_arraylist("view"));
         list_projects.setModel(dlm);
         try{
             list_projects.setSelectedIndex(0);
@@ -64,8 +65,18 @@ public class sharedtouser_window extends javax.swing.JDialog {
             load_issues(project_id);
         }catch(Exception e){
             new message_window(this,true,"List of shared to you objects is empty","");
+        }   
+    }
+    
+    /**
+     * Function for adding all data to the view
+     * @param dlm
+     * @param data 
+     */
+    void addAll(DefaultListModel dlm, ArrayList<String> data){
+        for (String element : data){
+            dlm.addElement(element);
         }
-        
     }
     
     /**
@@ -76,7 +87,7 @@ public class sharedtouser_window extends javax.swing.JDialog {
         Task_Connector tc = new Task_Connector(connector);
         DefaultListModel dlm = new DefaultListModel();
         Parser parser = new Parser(tc.load_task_glances(project_id, this));
-        dlm.addAll(parser.get_arraylist("view"));
+        addAll(dlm,parser.get_arraylist("view"));
         list_tasks.setModel(dlm);
     }
     
@@ -88,7 +99,7 @@ public class sharedtouser_window extends javax.swing.JDialog {
         Issue_Connector ic = new Issue_Connector(connector);
         DefaultListModel dlm = new DefaultListModel();
         Parser parser = new Parser(ic.load_issues_glances(project_id, this));
-        dlm.addAll(parser.get_arraylist("view"));
+        addAll(dlm,parser.get_arraylist("view"));
         list_tasks.setModel(dlm);
     }
 

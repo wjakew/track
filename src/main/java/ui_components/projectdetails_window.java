@@ -103,9 +103,20 @@ public class projectdetails_window extends javax.swing.JFrame {
         DefaultListModel dlm = new DefaultListModel();
         Task_Connector tc = new Task_Connector(connector);
         Parser parser = new Parser(tc.load_task_glances(project_id, this));
-        dlm.addAll(parser.get_arraylist("view"));
+        addAll(dlm,parser.get_arraylist("view"));
         list_tasks.setModel(dlm);
     }
+    /**
+     * Function for adding all data to the view
+     * @param dlm
+     * @param data 
+     */
+    void addAll(DefaultListModel dlm, ArrayList<String> data){
+        for (String element : data){
+            dlm.addElement(element);
+        }
+    }
+    
     
     /**
      * Function for loading issues data
@@ -115,7 +126,7 @@ public class projectdetails_window extends javax.swing.JFrame {
         DefaultListModel dlm = new DefaultListModel();
         Issue_Connector ic = new Issue_Connector(connector);
         Parser parser = new Parser(ic.load_issues_glances(project_id, this));
-        dlm.addAll(parser.get_arraylist("view"));
+        addAll(dlm,parser.get_arraylist("view"));
         list_issues.setModel(dlm);
     }
     
@@ -124,7 +135,7 @@ public class projectdetails_window extends javax.swing.JFrame {
      */
     void load_members(){
         DefaultListModel dlm = new DefaultListModel();
-        dlm.addAll(members);
+        addAll(dlm,members);
         list_members.setModel(dlm);
     }
     

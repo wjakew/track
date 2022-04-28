@@ -60,7 +60,8 @@ public class configurationload_window extends javax.swing.JDialog {
      * @return Boolean
      */
     boolean validate_fields(){
-        return !field_ip.getText().isBlank() && !field_apptoken.getText().isBlank() && !field_userlogin.getText().isBlank();
+        return !field_ip.getText().equals("") && !field_apptoken.getText().equals("") && !field_userlogin.getText().equals("");
+        
     }
     
 

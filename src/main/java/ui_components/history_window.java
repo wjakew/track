@@ -41,8 +41,19 @@ public class history_window extends javax.swing.JDialog {
      */
     void load_view(ArrayList<String> data){
         DefaultListModel dlm = new DefaultListModel();
-        dlm.addAll(data);
+        addAll(dlm,data);
         list_history.setModel(dlm);
+    }
+    
+    /**
+     * Function for adding all data to the view
+     * @param dlm
+     * @param data 
+     */
+    void addAll(DefaultListModel dlm, ArrayList<String> data){
+        for (String element : data){
+            dlm.addElement(element);
+        }
     }
 
     /**

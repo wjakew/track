@@ -9,6 +9,7 @@ import com.jakubwawak.track.connector.Connector;
 import com.jakubwawak.track.connector.Project_Connector;
 import com.jakubwawak.track.connector.Share_Connector;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import java.util.ArrayList;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import maintenence.Parser;
@@ -51,9 +52,20 @@ public class shareproject_window extends javax.swing.JDialog {
         Project_Connector pc = new Project_Connector(connector);
         DefaultListModel dlm = new DefaultListModel();
         Parser parser = new Parser(pc.load_projects_glances(this));
-        dlm.addAll(parser.get_arraylist("view"));
+        addAll(dlm,parser.get_arraylist("view"));
         list_projects.setModel(dlm);
     }
+    /**
+     * Function for adding all data to the view
+     * @param dlm
+     * @param data 
+     */
+    void addAll(DefaultListModel dlm, ArrayList<String> data){
+        for (String element : data){
+            dlm.addElement(element);
+        }
+    }
+    
 
     /** This method is called from within the constructor to
      * initialize the form.
